@@ -2,10 +2,6 @@
 #    path: /
 #    controller: App\Controller\DefaultController::index
 
-showApprenant:
-    path: /api/apprenants
-    controller: App\Controller\UserController::showApprenant
-    methods: ['GET']
 
 showApprenantById:
     path: /api/apprenants/{id}

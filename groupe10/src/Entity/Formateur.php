@@ -9,12 +9,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=FormateurRepository::class)
- * @ApiResource(
- *       attributes={
- *                  "normalization_context"={"groups"={"read"}},
- *                  "denormalization_context"={"groups"={"write"}}
- *       }
- * )
+ * @ApiResource()
  */
 class Formateur extends User
 {
@@ -22,7 +17,6 @@ class Formateur extends User
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"profil:read"})
      */
     private $id;
 
@@ -30,4 +24,5 @@ class Formateur extends User
     {
         return $this->id;
     }
+
 }

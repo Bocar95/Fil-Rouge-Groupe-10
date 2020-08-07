@@ -46,5 +46,29 @@ class CompetencesRepository extends ServiceEntityRepository
             ->getOneOrNullResult()
         ;
     }
+    
+    
+    public function updateLibelle($libelle, $id){
+        return $this->createQueryBuilder('c')
+            ->update(Competences::class, 'c')
+            ->set('c.libelle', $libelle)
+            ->where('c.id', $id)
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function updateDescriptif($descriptif, $id){
+        return $this->createQueryBuilder('c')
+            ->update(Competences::class, 'c')
+            ->set('c.descriptif', $descriptif)
+            ->andwhere('c.id = :id')
+            ->setParameter('id', $id)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
     */
+
 }

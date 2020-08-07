@@ -20,8 +20,9 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      collectionOperations={
  *         "get"={"path"="/admin/profils",
  *                  "access_control"="(is_granted('ROLE_ADMIN'))",
- *                  "access_control_message"="Vous n'avez pas access à cette Ressource"},
- *                  "post"={"path"="/admin/profils"},
+ *                  "access_control_message"="Vous n'avez pas access à cette Ressource"
+ *                },
+ *         "post"={"path"="/admin/profils"},
  *         "get_profils_users"={
  *                  "method"="GET",
  *                  "path"="/admin/profils/{id}/users",

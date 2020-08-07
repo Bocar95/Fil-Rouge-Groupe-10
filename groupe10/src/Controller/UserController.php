@@ -129,51 +129,6 @@ class UserController extends AbstractController
                 return $this->json("Access denied!!!");
             }
         }
-
-        /**
-        * @Route(path="/api/apprenants", name="ajout_apprenants", methods={"POST"})
-        */
-        public function addApprenant(Request $request,SerializerInterface $serializer,UserPasswordEncoderInterface $encoder,EntityManagerInterface $manager,ValidatorInterface $validator)
-        {
-            if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_FORMATEUR')){
-
-                // Get Body content of the Request
-                $userJson = $request->getContent();
-                
-                // Deserialize and insert into dataBase
-                $user = $serializer->deserialize($userJson, Apprenant::class,'json');
-
-                // Data Validation
-                $errors = $validator->validate($user);
-                if (count($errors)>0) {
-                    $errorsString =$serializer->serialize($errors,"json");
-                    return new JsonResponse( $errorsString ,Response::HTTP_BAD_REQUEST,[],true);
-                }
-
-                $entityManager = $this->getDoctrine()->getManager();
-                $password = $user->getPassword();
-                $user->setPassword($encoder->encodePassword($user, $password));
-                $entityManager->persist($user);
-                $entityManager->flush();
-                return new JsonResponse("success",Response::HTTP_CREATED,[],true);
-
-            }
-            else{
-                return $this->json("Access denied!!!");
-            }
-        }
-
-        //Seuls Les Formateurs/CM/ADMIN Peuvent Lister les Apprenants!!!
-        public function showApprenant(UserRepository $repo)
-        {
-            if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_FORMATEUR') || $this->isGranted('ROLE_CM') ) {
-                $apprenants= $repo->findByProfil("APPRENANT");
-                return $this->json($apprenants,Response::HTTP_OK,);
-            }
-            else{
-                return $this->json("Access denied!!!");
-            }
-        }
     
         //Seuls Les Admins/Formateurs/CM Peuvent Lister un Apprenant Par Son ID!!!
         public function showApprenantById(UserRepository $repo, $id)

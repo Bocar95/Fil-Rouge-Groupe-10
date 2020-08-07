@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Competences;
+use App\Repository\NiveauRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\CompetencesRepository;
 use Symfony\Component\HttpFoundation\Request;
@@ -20,13 +21,14 @@ class CompetencesController extends AbstractController
         */
         public function getGrpCompetences(CompetencesRepository $repo)
         {
-            if ($this->isGranted('ROLE_ADMIN') || $this->isGranted('ROLE_FORMATEUR') || $this->isGranted('ROLE_CM')){
-                $grpCompetences= $repo->findAll();
-                return $this->json($grpCompetences,Response::HTTP_OK,);
-            }
-            else{
-                return $this->json("Access denied!!!");
-            }
+                $Competences = new Competences;
+
+                if($this->isGranted("VIEW",$Competences)){
+                        $Competences= $repo->findAll();
+                        return $this->json($Competences,Response::HTTP_OK,);
+                }else{
+                        return $this->json(["message" => "Vous n'avez pas ce privilége."], Response::HTTP_FORBIDDEN);
+                }
         }
     
         /**
@@ -34,22 +36,26 @@ class CompetencesController extends AbstractController
         */
         public function addCompetences(Request $request,SerializerInterface $serializer,EntityManagerInterface $manager,ValidatorInterface $validator)
         {
-            if ($this->isGranted('ROLE_ADMIN')){
+                $Competences = new Competences;
 
-                // Get Body content of the Request
-                $competencesJson = $request->getContent();
+                if($this->isGranted("EDIT",$Competences)){
 
-                // Deserialize and insert into dataBase
-                $competences = $serializer->deserialize($competencesJson, Competences::class,'json');
+                        // Get Body content of the Request
+                        $competencesJson = $request->getContent();
 
-                $entityManager = $this->getDoctrine()->getManager();
-                $entityManager->persist($competences);
-                $entityManager->flush();
-                return new JsonResponse("success",Response::HTTP_CREATED,[],true);
+                        // Deserialize and insert into dataBase
+                        $competences = $serializer->deserialize($competencesJson, Competences::class,'json');
 
-            }
-            else{
-                return $this->json("Access denied!!!");
-            }
+                        $entityManager = $this->getDoctrine()->getManager();
+                        $entityManager->persist($competences);
+                        $entityManager->flush();
+
+                        return new JsonResponse("success",Response::HTTP_CREATED,[],true);
+                }
+                else{
+                        return $this->json(["message" => "Vous n'avez pas ce privilége."], Response::HTTP_FORBIDDEN);
+                }
+
+
         }
 }

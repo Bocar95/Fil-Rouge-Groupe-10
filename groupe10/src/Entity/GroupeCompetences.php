@@ -13,18 +13,28 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ORM\Entity(repositoryClass=GroupeCompetencesRepository::class)
  * @ApiResource(
+ *      normalizationContext={"groups"={"GroupeCompetences:read_M","GroupeCompetences:read_all"}},
+ *      denormalizationContext={"groups"={"GroupeCompetences:write"}},
  *      collectionOperations={
  *                  "get"={"path"="/admin/grpCompetences"},
- *                  "post"={"path"="/admin/grpCompetences"}
+ *                  "post"={
+ *                          "security_post_denormalize"="is_granted('EDIT', object)",
+ *                          "security_post_denormalize_message"="Vous n'avez pas ce privilége.",
+ *                          "path"="/admin/grpCompetences"
+ *                          }
  *      },
  *      itemOperations={
- *                  "get"={"path"="/admin/grpCompetences/{id}",
- *                          "access_control"="(is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR') or is_granted('ROLE_CM'))",
- *                          "access_control_message"="Vous n'avez pas access à cette Ressource"
+ *                  "get"={
+ *                          "security"="is_granted('VIEW', object)",
+ *                          "security_message"="Vous n'avez pas ce privilége.",
+ *                          "path"="/admin/grpCompetences/{id}",
+ *                          "defaults"={"id"=null}
  *                          },
- *                  "put"={"path"="/admin/grpCompetences/{id}",
- *                         "access_control"="(is_granted('ROLE_ADMIN') or is_granted('ROLE_FORMATEUR') or is_granted('ROLE_CM'))",
- *                          "access_control_message"="Vous n'avez pas access à cette Ressource"
+ *                  "put"={
+ *                          "security_post_denormalize"="is_granted('EDIT', object)",
+ *                          "security_post_denormalize_message"="Vous n'avez pas ce privilége.",
+ *                          "path"="/admin/grpCompetences/{id}",
+ *                          "defaults"={"id"=null}
  *                         }
  *      }
  * )
@@ -35,47 +45,51 @@ class GroupeCompetences
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"GroupeCompetences:read", "GroupeCompetences:write"})
+     * @Groups({"GroupeCompetences:read_M"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"GroupeCompetences:read", "GroupeCompetences:write"})
+     * @Groups({"GroupeCompetences:read_M"})
      */
     private $libelle;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     * @Groups({"GroupeCompetences:read", "GroupeCompetences:write"})
+     * @Groups({"GroupeCompetences:read_M"})
      */
     private $descriptif;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Competences::class, inversedBy="groupeCompetences")
-     * @Groups({"GroupeCompetences:read", "GroupeCompetences:write"})
+     * @ORM\ManyToMany(targetEntity=Competences::class, inversedBy="groupeCompetences", cascade="persist")
+     * @Groups({"GroupeCompetences:read_M", "GroupeCompetences:write"})
      * @ApiSubresource()
      */
     private $competences;
 
     /**
      * @ORM\ManyToMany(targetEntity=Referentiel::class, inversedBy="groupeCompetences")
-     * @Groups({"GroupeCompetences:read", "GroupeCompetences:write"})
      * @ApiSubresource()
      */
     private $referentiel;
 
     /**
      * @ORM\ManyToOne(targetEntity=Admin::class, inversedBy="groupeCompetences")
-     * @Groups({"GroupeCompetences:read", "GroupeCompetences:write"})
      * @ApiSubresource()
      */
     private $admin;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=Tag::class, inversedBy="groupeCompetences")
+     */
+    private $tag;
 
     public function __construct()
     {
         $this->competences = new ArrayCollection();
         $this->referentiel = new ArrayCollection();
+        $this->tag = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -115,12 +129,12 @@ class GroupeCompetences
         return $this->competences;
     }
 
+
     public function addCompetence(Competences $competence): self
     {
         if (!$this->competences->contains($competence)) {
             $this->competences[] = $competence;
         }
-
         return $this;
     }
 
@@ -136,10 +150,10 @@ class GroupeCompetences
     /**
      * @return Collection|Referentiel[]
      */
-    public function getReferentiel(): Collection
-    {
-        return $this->referentiel;
-    }
+    //public function getReferentiel(): Collection
+    //{
+    //    return $this->referentiel;
+    //}
 
     public function addReferentiel(Referentiel $referentiel): self
     {
@@ -170,4 +184,31 @@ class GroupeCompetences
 
         return $this;
     }
+
+    /**
+     * @return Collection|Tag[]
+     */
+    public function getTag(): Collection
+    {
+        return $this->tag;
+    }
+
+    public function addTag(Tag $tag): self
+    {
+        if (!$this->tag->contains($tag)) {
+            $this->tag[] = $tag;
+        }
+
+        return $this;
+    }
+
+    public function removeTag(Tag $tag): self
+    {
+        if ($this->tag->contains($tag)) {
+            $this->tag->removeElement($tag);
+        }
+
+        return $this;
+    }
+
 }

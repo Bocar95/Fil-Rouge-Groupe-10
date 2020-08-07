@@ -25,11 +25,11 @@ use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
  * @ORM\DiscriminatorMap({"user" = "User", "admin"="Admin", "formateur" = "Formateur", "apprenant" = "Apprenant", "cm"="Cm"})
  * @UniqueEntity("email",message="Cette adresse mail est déja utilisé.")
  * @ApiResource(
- *       normalizationContext={"groups"={"user:read"}},
- *       denormalizationContext={"groups"={"user:write"}},
  *     collectionOperations={
  *         "get"={"path"="/admin/users"},
- *         "post"={"path"="/admin/users"}
+ *         "post"={"path"="/admin/users"},
+ *          "get_apprenants"={"method"="get",
+ *                            "path"="/apprenants"}
  *     },
  *     itemOperations={
  *         "get"={"path"="/admin/users/{id}",

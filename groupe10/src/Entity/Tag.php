@@ -2,84 +2,70 @@
 
 namespace App\Entity;
 
-use Doctrine\ORM\Mapping as ORM;
-use App\Repository\CompetencesRepository;
-use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
-use ApiPlatform\Core\Annotation\ApiSubresource;
-use Symfony\Component\Validator\Constraints as Assert;
+use App\Repository\TagRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Symfony\Component\Serializer\Annotation\Groups;
+use Doctrine\Common\Collections\Collection;
+use Doctrine\ORM\Mapping as ORM;
 
 /**
- * @ORM\Entity(repositoryClass=CompetencesRepository::class)
+ * @ORM\Entity(repositoryClass=TagRepository::class)
  * @ApiResource(
  *      collectionOperations={
- *                  "get"={"path"="/admin/competences"},
+ *                  "get"={"path"="/admin/tags"},
  *                  "post"={
  *                          "security_post_denormalize"="is_granted('EDIT', object)",
  *                          "security_post_denormalize_message"="Vous n'avez pas ce privilége.",
- *                          "path"="/admin/competences"
+ *                          "path"="/admin/tags"
  *                          }
  *      },
  *      itemOperations={
  *                  "get"={
  *                          "security"="is_granted('VIEW', object)",
  *                          "security_message"="Vous n'avez pas ce privilége.",
- *                          "path"="/admin/competences/{id}",
+ *                          "path"="/admin/tags/{id}",
  *                          "defaults"={"id"=null}
  *                   },
  *                  "put"={
  *                          "security_post_denormalize"="is_granted('EDIT', object)",
  *                          "security_post_denormalize_message"="Vous n'avez pas ce privilége.",
- *                          "path"="/admin/competences/{id}"
+ *                          "path"="/admin/tags/{id}"
  *                   }
  *      }
  * )
  */
-class Competences
+class Tag
 {
     /**
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"GroupeCompetences:read_M"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(
-     *     message = "Ce Champ ne doit pas être vide."
-     * )
-     * @Groups({"GroupeCompetences:read_M"})
      */
     private $libelle;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Assert\NotBlank(
-     *     message = "Ce Champ ne doit pas être vide."
-     * )
-     * @Groups({"GroupeCompetences:read_M"})
      */
     private $descriptif;
 
     /**
-     * @ORM\OneToMany(targetEntity=Niveau::class, mappedBy="competences")
-     * @Groups({"GroupeCompetences:read_M"})
-     * @ApiSubresource()
+     * @ORM\ManyToMany(targetEntity=GroupeTag::class, mappedBy="tag")
      */
-    private $niveau;
+    private $groupeTags;
 
     /**
-     * @ORM\ManyToMany(targetEntity=GroupeCompetences::class, mappedBy="competences")
+     * @ORM\ManyToMany(targetEntity=GroupeCompetences::class, mappedBy="tag")
      */
     private $groupeCompetences;
 
     public function __construct()
     {
-        $this->niveau = new ArrayCollection();
+        $this->groupeTags = new ArrayCollection();
         $this->groupeCompetences = new ArrayCollection();
     }
 
@@ -113,31 +99,28 @@ class Competences
     }
 
     /**
-     * @return Collection|Niveau[]
+     * @return Collection|GroupeTag[]
      */
-    public function getNiveau(): Collection
+    public function getGroupeTags(): Collection
     {
-        return $this->niveau;
+        return $this->groupeTags;
     }
 
-    public function addNiveau(Niveau $niveau): self
+    public function addGroupeTag(GroupeTag $groupeTag): self
     {
-        if (!$this->niveau->contains($niveau)) {
-            $this->niveau[] = $niveau;
-            $niveau->setCompetences($this);
+        if (!$this->groupeTags->contains($groupeTag)) {
+            $this->groupeTags[] = $groupeTag;
+            $groupeTag->addTag($this);
         }
 
         return $this;
     }
 
-    public function removeNiveau(Niveau $niveau): self
+    public function removeGroupeTag(GroupeTag $groupeTag): self
     {
-        if ($this->niveau->contains($niveau)) {
-            $this->niveau->removeElement($niveau);
-            // set the owning side to null (unless already changed)
-            if ($niveau->getCompetences() === $this) {
-                $niveau->setCompetences(null);
-            }
+        if ($this->groupeTags->contains($groupeTag)) {
+            $this->groupeTags->removeElement($groupeTag);
+            $groupeTag->removeTag($this);
         }
 
         return $this;
@@ -155,7 +138,7 @@ class Competences
     {
         if (!$this->groupeCompetences->contains($groupeCompetence)) {
             $this->groupeCompetences[] = $groupeCompetence;
-            $groupeCompetence->addCompetence($this);
+            $groupeCompetence->addTag($this);
         }
 
         return $this;
@@ -165,9 +148,10 @@ class Competences
     {
         if ($this->groupeCompetences->contains($groupeCompetence)) {
             $this->groupeCompetences->removeElement($groupeCompetence);
-            $groupeCompetence->removeCompetence($this);
+            $groupeCompetence->removeTag($this);
         }
 
         return $this;
     }
+
 }

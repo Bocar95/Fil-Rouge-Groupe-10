@@ -2,25 +2,25 @@
 
 namespace App\Repository;
 
-use App\Entity\GroupeCompetences;
-use Doctrine\Persistence\ManagerRegistry;
+use App\Entity\GroupeTag;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
+use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method GroupeCompetences|null find($id, $lockMode = null, $lockVersion = null)
- * @method GroupeCompetences|null findOneBy(array $criteria, array $orderBy = null)
- * @method GroupeCompetences[]    findAll()
- * @method GroupeCompetences[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method GroupeTag|null find($id, $lockMode = null, $lockVersion = null)
+ * @method GroupeTag|null findOneBy(array $criteria, array $orderBy = null)
+ * @method GroupeTag[]    findAll()
+ * @method GroupeTag[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class GroupeCompetencesRepository extends ServiceEntityRepository
+class GroupeTagRepository extends ServiceEntityRepository
 {
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, GroupeCompetences::class);
+        parent::__construct($registry, GroupeTag::class);
     }
 
     // /**
-    //  * @return GroupeCompetences[] Returns an array of GroupeCompetences objects
+    //  * @return GroupeTag[] Returns an array of GroupeTag objects
     //  */
     /*
     public function findByExampleField($value)
@@ -37,7 +37,7 @@ class GroupeCompetencesRepository extends ServiceEntityRepository
     */
 
     /*
-    public function findOneBySomeField($value): ?GroupeCompetences
+    public function findOneBySomeField($value): ?GroupeTag
     {
         return $this->createQueryBuilder('g')
             ->andWhere('g.exampleField = :val')
@@ -47,5 +47,4 @@ class GroupeCompetencesRepository extends ServiceEntityRepository
         ;
     }
     */
-
 }

@@ -10,7 +10,14 @@ use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=ApprenantRepository::class)
- * @ApiResource()
+ * @ApiResource(
+ *       itemOperations={
+ *                  "get"={
+ *                          "path"="/apprenants/{id}",
+ *                          "defaults"={"id"=null}
+ *                      },
+ *      }
+ * )
  */
 class Apprenant extends User
 {
@@ -76,4 +83,5 @@ class Apprenant extends User
 
         return $this;
     }
+
 }

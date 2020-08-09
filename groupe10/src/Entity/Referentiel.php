@@ -10,8 +10,15 @@ use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
 
 /**
- * @ApiResource()
  * @ORM\Entity(repositoryClass=ReferentielRepository::class)
+ * @ApiResource(
+ *      collectionOperations={
+ *          "post"={
+ *                  "security_post_denormalize"="is_granted('EDIT', object)",
+ *                  "security_post_denormalize_message"="Vous n'avez pas ce privilége.",
+ *                  "path"="/admin/referentiels"},
+ *      }
+ * )
  */
 class Referentiel
 {

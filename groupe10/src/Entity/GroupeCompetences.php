@@ -17,6 +17,10 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      denormalizationContext={"groups"={"GroupeCompetences:write"}},
  *      collectionOperations={
  *                  "get"={"path"="/admin/grpCompetences"},
+ *                  "getGrpCompetences"={"methods"="get",
+ *                                     "path"="/admin/grpCompetences/competences",
+ *                                     "route_name"="apiGetGrpCompetences"
+ *                                      },
  *                  "post"={
  *                          "security_post_denormalize"="is_granted('EDIT', object)",
  *                          "security_post_denormalize_message"="Vous n'avez pas ce privilége.",
@@ -30,6 +34,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *                          "path"="/admin/grpCompetences/{id}",
  *                          "defaults"={"id"=null}
  *                          },
+ *                  "getGrpIdCompetences"={"methods"="get",
+ *                                     "path"="/admin/grpCompetences/{id}/competences",
+ *                                     "defaults"={"id"=null},
+ *                                     "route_name"="apiGetGrpIdCompetences"
+ *                      },
  *                  "put"={
  *                          "security_post_denormalize"="is_granted('EDIT', object)",
  *                          "security_post_denormalize_message"="Vous n'avez pas ce privilége.",

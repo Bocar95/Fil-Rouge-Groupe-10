@@ -17,25 +17,25 @@ class Niveau
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
-     * @Groups({"GroupeCompetences:read_M"})
+     * @Groups({"Competences:read_N"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"GroupeCompetences:read_M"})
+     * @Groups({"Competences:read_N"})
      */
     private $libelle;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"GroupeCompetences:read_M"})
+     * @Groups({"Competences:read_N"})
      */
     private $critereEvaluation;
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"GroupeCompetences:read_M"})
+     * @Groups({"Competences:read_N"})
      */
     private $groupeAction;
 
@@ -85,10 +85,10 @@ class Niveau
         return $this;
     }
 
-    public function getCompetences(): ?Competences
-    {
-        return $this->competences;
-    }
+    //public function getCompetences(): ?Competences
+    //{
+    //    return $this->competences;
+    //}
 
     public function setCompetences(?Competences $competences): self
     {

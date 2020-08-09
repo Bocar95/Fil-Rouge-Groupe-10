@@ -14,6 +14,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ORM\Entity(repositoryClass=CompetencesRepository::class)
  * @ApiResource(
+ *      normalizationContext={"groups"={"Competences:read_N","Competences:read_all"}},
  *      collectionOperations={
  *                  "get"={"path"="/admin/competences"},
  *                  "post"={
@@ -44,6 +45,7 @@ class Competences
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      * @Groups({"GroupeCompetences:read_M"})
+     * @Groups({"Competences:read_N"})
      */
     private $id;
 
@@ -53,6 +55,7 @@ class Competences
      *     message = "Ce Champ ne doit pas être vide."
      * )
      * @Groups({"GroupeCompetences:read_M"})
+     * @Groups({"Competences:read_N"})
      */
     private $libelle;
 
@@ -62,12 +65,14 @@ class Competences
      *     message = "Ce Champ ne doit pas être vide."
      * )
      * @Groups({"GroupeCompetences:read_M"})
+     * @Groups({"Competences:read_N"})
      */
     private $descriptif;
 
     /**
-     * @ORM\OneToMany(targetEntity=Niveau::class, mappedBy="competences")
+     * @ORM\OneToMany(targetEntity=Niveau::class, mappedBy="competences", cascade="persist")
      * @Groups({"GroupeCompetences:read_M"})
+     * @Groups({"Competences:read_N"})
      * @ApiSubresource()
      */
     private $niveau;
@@ -146,10 +151,10 @@ class Competences
     /**
      * @return Collection|GroupeCompetences[]
      */
-    public function getGroupeCompetences(): Collection
-    {
-        return $this->groupeCompetences;
-    }
+    //public function getGroupeCompetences(): Collection
+    //{
+    //    return $this->groupeCompetences;
+    //}
 
     public function addGroupeCompetence(GroupeCompetences $groupeCompetence): self
     {

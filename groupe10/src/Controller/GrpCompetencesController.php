@@ -34,6 +34,66 @@ class GrpCompetencesController extends AbstractController
                         return $this->json(["message" => "Vous n'avez pas ce privilége."], Response::HTTP_FORBIDDEN);
                 }
         }
+
+        /**
+        * @Route(path="/api/admin/grpCompetences/competences",
+        *        name="apiGetGrpCompCompetences",
+        *        methods={"GET"},
+        *       defaults={
+        *          "_controller"="\app\ControllerGrpCompetencesController::getGrpCompCompetences",
+        *         "_api_resource_class"=GroupeCompetences::class,
+        *         "_api_collection_operation_name"="getGrpCompCompetences"
+        *         }
+        *)
+        */
+        public function getGrpCompCompetences(Request $request,SerializerInterface $serializer, EntityManagerInterface $entityManager,ValidatorInterface $validator, AdminRepository $AdminRepo, CompetencesRepository $CompRepo, GroupeCompetencesRepository $grpCompRepo)
+        {
+          //On cré un objet de groupe de competences
+          $grpCompetences = new GroupeCompetences();
+
+          //Ici On vérifie l'autorisation d'accés.
+          if($this->isGranted("VIEW",$grpCompetences)){
+
+            //On récupére tous les groupes de compétences existant qu'on place dans une variable
+            $grpCompetences = $grpCompRepo-> findAll();
+                        
+            if (!empty($grpCompetences)){
+                                        
+              // On transforme les groupes de competences "objets" en tableau.
+              $grpCompetencesTab = $serializer->normalize($grpCompetences, 'json');
+
+              //On cré un objet de compétence puis on récupére tous les compétences existant
+              $competence = new Competences();
+              $competence = $CompRepo-> findAll();
+
+              //on détermine le nombre total de groupes de compétences
+              $total= count($grpCompetencesTab);
+
+              //on détermine le nombre total de compétences
+              $total2= count($competence);
+
+              //Ici on récupére les compétences qui sont dans les groupes de compétence...
+              //puis on les place dans un tableau
+              for ($i=0; $i < $total; $i++) {
+                for ($j=0; $j < $total2; $j++) {
+                  if (isset($grpCompetencesTab[$i]["competences"][$j])){
+                    $competences []= $grpCompetencesTab[$i]["competences"][$j];
+                  }
+                }
+              }
+
+              //enfin on retourne le resultat
+              return $this->json($competences,Response::HTTP_OK,);
+
+            }else{
+              return $this->json(["message" => "Les groupes de compétences n'existe pas dans la base de données."], Response::HTTP_FORBIDDEN);
+            }
+              
+          }else{
+            return $this->json(["message" => "Vous n'avez pas ce privilége."], Response::HTTP_FORBIDDEN);
+          }
+
+        }
     
         /**
         * @Route(path="/api/admin/grpCompetences", name="api_add_grpCompetences", methods={"POST"})
@@ -46,7 +106,7 @@ class GrpCompetencesController extends AbstractController
                         // Get Body content of the Request
                         $grpCompetencesJson = $request->getContent();
 
-                        // Deserialize and insert into dataBase
+                        // On transforme le json en tableau
                         $grpCompetencesTab = $serializer->decode($grpCompetencesJson, 'json');
                         
                         $grpCompetences->setLibelle($grpCompetencesTab["libelle"]);
@@ -176,5 +236,48 @@ class GrpCompetencesController extends AbstractController
           }
 
         }
+
+        /**
+        * @Route(path="/api/admin/grpCompetences/{id}/competences",
+        *        name="apiGetGrpIdCompetences",
+        *        methods={"GET"},
+        * defaults={
+        *          "_controller"="\app\ControllerGrpCompetencesController::getGrpIdCompetences",
+        *         "_api_resource_class"=GroupeCompetences::class,
+        *         "_api_collection_operation_name"="getGrpIdCompetences"
+        *         }
+        *)
+        */
+        public function getGrpIdCompetences(Request $request,SerializerInterface $serializer, $id, EntityManagerInterface $entityManager,ValidatorInterface $validator, AdminRepository $AdminRepo, CompetencesRepository $CompRepo, GroupeCompetencesRepository $grpCompRepo)
+        {
+          $grpCompetences = new GroupeCompetences();
+
+          if($this->isGranted("VIEW",$grpCompetences)){
+
+            //On détermine si le groupe compétence existe dans la base de données
+            $grpCompetences = $grpCompRepo-> find($id);
+                        
+            if (isset($grpCompetences)){
+                                        
+              // On transforme les groupes de competences "objets" en tableau.
+              $grpCompetencesTab = $serializer->normalize($grpCompetences, 'json');
+
+              //On récupére les compétences qu'on met dans un tableau
+              $competencesTab = $grpCompetencesTab["competences"];
+              //dd($competencesTab);
+
+              if (!empty($competencesTab)){
+                return $this->json($competencesTab,Response::HTTP_OK,);
+              }
+            }else{
+              return $this->json(["message" => "Ce groupe de competences n'existe pas."], Response::HTTP_FORBIDDEN);
+            }
+              
+          }else{
+            return $this->json(["message" => "Vous n'avez pas ce privilége."], Response::HTTP_FORBIDDEN);
+          }
+
+        }
 }
+
         

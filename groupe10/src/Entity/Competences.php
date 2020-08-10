@@ -2,14 +2,15 @@
 
 namespace App\Entity;
 
+use App\Entity\Referentiel;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\CompetencesRepository;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
-use Symfony\Component\Validator\Constraints as Assert;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 /**
  * @ORM\Entity(repositoryClass=CompetencesRepository::class)
@@ -46,6 +47,7 @@ class Competences
      * @ORM\Column(type="integer")
      * @Groups({"GroupeCompetences:read_M"})
      * @Groups({"Competences:read_N"})
+     * @Groups({"Referentiel:read_R"})
      */
     private $id;
 
@@ -56,6 +58,7 @@ class Competences
      * )
      * @Groups({"GroupeCompetences:read_M"})
      * @Groups({"Competences:read_N"})
+     * @Groups({"Referentiel:read_R"})
      */
     private $libelle;
 
@@ -66,6 +69,7 @@ class Competences
      * )
      * @Groups({"GroupeCompetences:read_M"})
      * @Groups({"Competences:read_N"})
+     * @Groups({"Referentiel:read_R"})
      */
     private $descriptif;
 
@@ -73,6 +77,7 @@ class Competences
      * @ORM\OneToMany(targetEntity=Niveau::class, mappedBy="competences", cascade="persist")
      * @Groups({"GroupeCompetences:read_M"})
      * @Groups({"Competences:read_N"})
+     * @Groups({"Referentiel:read_R"})
      * @ApiSubresource()
      */
     private $niveau;

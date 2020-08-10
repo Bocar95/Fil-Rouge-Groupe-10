@@ -55,24 +55,28 @@ class GroupeCompetences
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      * @Groups({"GroupeCompetences:read_M"})
+     * @Groups({"Referentiel:read_R"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"GroupeCompetences:read_M"})
+     * @Groups({"Referentiel:read_R"})
      */
     private $libelle;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"GroupeCompetences:read_M"})
+     * @Groups({"Referentiel:read_R"})
      */
     private $descriptif;
 
     /**
      * @ORM\ManyToMany(targetEntity=Competences::class, inversedBy="groupeCompetences", cascade="persist")
      * @Groups({"GroupeCompetences:read_M", "GroupeCompetences:write"})
+     * @Groups({"Referentiel:read_R"})
      * @ApiSubresource()
      */
     private $competences;
@@ -85,6 +89,7 @@ class GroupeCompetences
 
     /**
      * @ORM\ManyToOne(targetEntity=Admin::class, inversedBy="groupeCompetences")
+     * @Groups({"Referentiel:read_R"})
      * @ApiSubresource()
      */
     private $admin;

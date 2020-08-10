@@ -8,15 +8,44 @@ use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=ReferentielRepository::class)
  * @ApiResource(
+ *      normalizationContext={"groups"={"Referentiel:read_R","Referentiel:read_all"}},
  *      collectionOperations={
+ *          "get"={"path"="/admin/referentiels"},
+ *          "getRefGrpCompetences"={
+ *                            "methods"="get",
+ *                            "path"="/api/admin/referentiels/grpecompetences",
+ *                            "route_name"="apiGetRefGrpComp"
+ *          },
  *          "post"={
  *                  "security_post_denormalize"="is_granted('EDIT', object)",
  *                  "security_post_denormalize_message"="Vous n'avez pas ce privilége.",
- *                  "path"="/admin/referentiels"},
+ *                  "path"="/admin/referentiels"
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *                  "security_post_denormalize"="is_granted('VIEW', object)",
+ *                  "security_post_denormalize_message"="Vous n'avez pas ce privilége.",
+ *                  "path"="/admin/referentiels/{id}",
+ *                  "defaults"={"id"=null}
+ *          },
+ *          "getRefIdGrpCompetences"={
+ *                              "methods"="get",
+ *                              "path"="/api/admin/referentiels/{id}/grpecompetences",
+ *                              "defaults"={"id"=null},
+ *                              "route_name"="apiGetRefIdgrpComp"
+ *           },
+ *           "put"={
+ *                  "security_post_denormalize"="is_granted('EDIT', object)",
+ *                  "security_post_denormalize_message"="Vous n'avez pas ce privilége.",
+ *                  "path"="/admin/referentiels/{id}",
+ *                  "defaults"={"id"=null}
+ *                 }
  *      }
  * )
  */
@@ -26,36 +55,44 @@ class Referentiel
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"Referentiel:read_R"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"Referentiel:read_R"})
      */
     private $libelle;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"Referentiel:read_R"})
      */
     private $presentation;
 
     /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @ORM\Column(type="blob", length=255, nullable=true)
+     * @Groups({"Referentiel:read_R"})
      */
     private $programme;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
-     */
-    private $critereAdmission;
-
-    /**
-     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"Referentiel:read_R"})
      */
     private $critereEvaluation;
 
     /**
+     * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"Referentiel:read_R"})
+     */
+    private $critereAdmission;
+
+    /**
      * @ORM\ManyToMany(targetEntity=GroupeCompetences::class, mappedBy="referentiel")
+     * @Groups({"Referentiel:read_R"})
+     * @ApiSubresource()
      */
     private $groupeCompetences;
 
@@ -111,18 +148,6 @@ class Referentiel
         return $this;
     }
 
-    public function getCritereAdmission(): ?string
-    {
-        return $this->critereAdmission;
-    }
-
-    public function setCritereAdmission(?string $critereAdmission): self
-    {
-        $this->critereAdmission = $critereAdmission;
-
-        return $this;
-    }
-
     public function getCritereEvaluation(): ?string
     {
         return $this->critereEvaluation;
@@ -131,6 +156,18 @@ class Referentiel
     public function setCritereEvaluation(?string $critereEvaluation): self
     {
         $this->critereEvaluation = $critereEvaluation;
+
+        return $this;
+    }
+
+    public function getCritereAdmission(): ?string
+    {
+        return $this->critereAdmission;
+    }
+
+    public function setCritereAdmission(?string $critereAdmission): self
+    {
+        $this->critereAdmission = $critereAdmission;
 
         return $this;
     }

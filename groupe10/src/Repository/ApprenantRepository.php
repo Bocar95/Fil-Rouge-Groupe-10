@@ -59,4 +59,16 @@ class ApprenantRepository extends ServiceEntityRepository
             ->getResult()
         ;
     }
+
+    public function findByEmail($value)
+    {
+        return $this->createQueryBuilder('u')
+            ->innerJoin('u.apprenant', 'a')
+            ->andWhere('a.email = :val')
+            ->setParameter('val', $value)
+            ->orderBy('u.id', 'ASC')
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

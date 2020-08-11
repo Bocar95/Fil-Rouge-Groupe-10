@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\GroupeApprenantRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource()
@@ -18,26 +19,31 @@ class GroupeApprenant
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"Promo:read_P"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"Promo:read_P"})
      */
     private $nom;
 
     /**
      * @ORM\Column(type="date")
+     * @Groups({"Promo:read_P"})
      */
     private $dateCreation;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"Promo:read_P"})
      */
     private $statut;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"Promo:read_P"})
      */
     private $type;
 
@@ -47,12 +53,14 @@ class GroupeApprenant
     private $promo;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Apprenant::class, mappedBy="groupeApprenants")
+     * @ORM\ManyToMany(targetEntity=Apprenant::class, inversedBy="groupeApprenants", cascade="persist")
+     * @Groups({"Promo:read_P"})
      */
     private $apprenants;
 
     /**
-     * @ORM\ManyToMany(targetEntity=Formateur::class, mappedBy="groupeApprenant")
+     * @ORM\ManyToMany(targetEntity=Formateur::class, inversedBy="groupeApprenants")
+     * @Groups({"Promo:read_P"})
      */
     private $formateurs;
 
@@ -139,7 +147,6 @@ class GroupeApprenant
     {
         if (!$this->apprenants->contains($apprenant)) {
             $this->apprenants[] = $apprenant;
-            $apprenant->addGroupeApprenant($this);
         }
 
         return $this;
@@ -149,7 +156,6 @@ class GroupeApprenant
     {
         if ($this->apprenants->contains($apprenant)) {
             $this->apprenants->removeElement($apprenant);
-            $apprenant->removeGroupeApprenant($this);
         }
 
         return $this;
@@ -167,7 +173,6 @@ class GroupeApprenant
     {
         if (!$this->formateurs->contains($formateur)) {
             $this->formateurs[] = $formateur;
-            $formateur->addGroupeApprenant($this);
         }
 
         return $this;
@@ -177,7 +182,6 @@ class GroupeApprenant
     {
         if ($this->formateurs->contains($formateur)) {
             $this->formateurs->removeElement($formateur);
-            $formateur->removeGroupeApprenant($this);
         }
 
         return $this;

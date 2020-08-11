@@ -3,6 +3,8 @@
 namespace App\Entity;
 
 use App\Entity\User;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\ApprenantRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -25,23 +27,37 @@ class Apprenant extends User
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"Promo:read_P"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"Promo:read_P"})
      */
     private $genre;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"Promo:read_P"})
      */
     private $statut;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"Promo:read_P"})
      */
     private $infoComplementaire;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=GroupeApprenant::class, mappedBy="apprenants")
+     */
+    private $groupeApprenants;
+
+    public function __construct()
+    {
+        $this->groupeApprenants = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -80,6 +96,34 @@ class Apprenant extends User
     public function setInfoComplementaire(?string $infoComplementaire): self
     {
         $this->infoComplementaire = $infoComplementaire;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|GroupeApprenant[]
+     */
+    public function getGroupeApprenants(): Collection
+    {
+        return $this->groupeApprenants;
+    }
+
+    public function addGroupeApprenant(GroupeApprenant $groupeApprenant): self
+    {
+        if (!$this->groupeApprenants->contains($groupeApprenant)) {
+            $this->groupeApprenants[] = $groupeApprenant;
+            $groupeApprenant->addApprenant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeGroupeApprenant(GroupeApprenant $groupeApprenant): self
+    {
+        if ($this->groupeApprenants->contains($groupeApprenant)) {
+            $this->groupeApprenants->removeElement($groupeApprenant);
+            $groupeApprenant->removeApprenant($this);
+        }
 
         return $this;
     }

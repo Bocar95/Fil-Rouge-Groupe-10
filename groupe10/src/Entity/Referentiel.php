@@ -56,42 +56,49 @@ class Referentiel
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      * @Groups({"Referentiel:read_R"})
+     * @Groups({"Promo:read_P"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"Referentiel:read_R"})
+     * @Groups({"Promo:read_P"})
      */
     private $libelle;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"Referentiel:read_R"})
+     * @Groups({"Promo:read_P"})
      */
     private $presentation;
 
     /**
      * @ORM\Column(type="blob", length=255, nullable=true)
      * @Groups({"Referentiel:read_R"})
+     * @Groups({"Promo:read_P"})
      */
     private $programme;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"Referentiel:read_R"})
+     * @Groups({"Promo:read_P"})
      */
     private $critereEvaluation;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"Referentiel:read_R"})
+     * @Groups({"Promo:read_P"})
      */
     private $critereAdmission;
 
     /**
      * @ORM\ManyToMany(targetEntity=GroupeCompetences::class, mappedBy="referentiel")
      * @Groups({"Referentiel:read_R"})
+     * @Groups({"Promo:read_P"})
      * @ApiSubresource()
      */
     private $groupeCompetences;

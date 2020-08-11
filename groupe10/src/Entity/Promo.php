@@ -2,15 +2,26 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\PromoRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PromoRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
  * @ORM\Entity(repositoryClass=PromoRepository::class)
+ * @ApiResource(
+ *      normalizationContext={"groups"={"Promo:read_P","Promo:read_all"}},
+ *      collectionOperations={
+ *          "get"={"path"="/admin/promo"},
+ *          "post"={
+ *                  "security_post_denormalize"="is_granted('EDIT', object)",
+ *                  "security_post_denormalize_message"="Vous n'avez pas ce privilége.",
+ *                  "path"="/admin/promo"
+ *          }
+ *      }
+ * )
  */
 class Promo
 {
@@ -18,66 +29,79 @@ class Promo
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"Promo:read_P"})
      */
     private $id;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"Promo:read_P"})
      */
     private $langue;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"Promo:read_P"})
      */
     private $titre;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"Promo:read_P"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"Promo:read_P"})
      */
     private $lieu;
 
     /**
-     * @ORM\Column(type="string", length=255)
-     */
-    private $referenceAgate;
-
-    /**
      * @ORM\Column(type="date")
+     * @Groups({"Promo:read_P"})
      */
     private $dateDebut;
 
     /**
      * @ORM\Column(type="date")
+     * @Groups({"Promo:read_P"})
      */
     private $dateFinProvisoire;
 
     /**
      * @ORM\Column(type="date", nullable=true)
+     * @Groups({"Promo:read_P"})
      */
     private $dateFinReelle;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"Promo:read_P"})
      */
     private $fabrique;
 
     /**
      * @ORM\Column(type="boolean")
+     * @Groups({"Promo:read_P"})
      */
     private $etat;
 
     /**
      * @ORM\ManyToOne(targetEntity=Referentiel::class, inversedBy="promos")
+     * @Groups({"Promo:read_P"})
      */
     private $referentiel;
 
     /**
-     * @ORM\OneToMany(targetEntity=GroupeApprenant::class, mappedBy="promo")
+     * @ORM\ManyToMany(targetEntity=Formateur::class, inversedBy="promos")
+     * @Groups({"Promo:read_P"})
+     */
+    private $formateurs;
+
+    /**
+     * @ORM\OneToMany(targetEntity=GroupeApprenant::class, mappedBy="promo", cascade="persist")
+     * @Groups({"Promo:read_P"})
      */
     private $groupeApprenants;
 
@@ -89,6 +113,7 @@ class Promo
     public function __construct()
     {
         $this->groupeApprenants = new ArrayCollection();
+        $this->formateurs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -140,18 +165,6 @@ class Promo
     public function setLieu(?string $lieu): self
     {
         $this->lieu = $lieu;
-
-        return $this;
-    }
-
-    public function getReferenceAgate(): ?string
-    {
-        return $this->referenceAgate;
-    }
-
-    public function setReferenceAgate(string $referenceAgate): self
-    {
-        $this->referenceAgate = $referenceAgate;
 
         return $this;
     }
@@ -224,6 +237,32 @@ class Promo
     public function setReferentiel(?Referentiel $referentiel): self
     {
         $this->referentiel = $referentiel;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Formateur[]
+     */
+    public function getFormateurs(): Collection
+    {
+        return $this->formateurs;
+    }
+
+    public function addFormateur(Formateur $formateur): self
+    {
+        if (!$this->formateurs->contains($formateur)) {
+            $this->formateurs[] = $formateur;
+        }
+
+        return $this;
+    }
+
+    public function removeFormateur(Formateur $formateur): self
+    {
+        if ($this->formateurs->contains($formateur)) {
+            $this->formateurs->removeElement($formateur);
+        }
 
         return $this;
     }

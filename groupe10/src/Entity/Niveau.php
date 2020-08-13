@@ -24,18 +24,21 @@ class Niveau
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"Competences:read_N"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $libelle;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"Competences:read_N"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $critereEvaluation;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"Competences:read_N"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $groupeAction;
 

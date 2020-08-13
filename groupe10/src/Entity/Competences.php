@@ -59,6 +59,7 @@ class Competences
      * @Groups({"GroupeCompetences:read_M"})
      * @Groups({"Competences:read_N"})
      * @Groups({"Referentiel:read_R"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $libelle;
 
@@ -70,6 +71,7 @@ class Competences
      * @Groups({"GroupeCompetences:read_M"})
      * @Groups({"Competences:read_N"})
      * @Groups({"Referentiel:read_R"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $descriptif;
 
@@ -78,6 +80,7 @@ class Competences
      * @Groups({"GroupeCompetences:read_M"})
      * @Groups({"Competences:read_N"})
      * @Groups({"Referentiel:read_R"})
+     * @Groups({"GroupeApprenant:read_GA"})
      * @ApiSubresource()
      */
     private $niveau;

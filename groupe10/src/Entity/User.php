@@ -48,6 +48,8 @@ class User implements UserInterface
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
      * @Groups({"user:read", "user:write"})
+     * @Groups({"Promo:read_P"})
+     * @Groups({"Formateur:read_F"})
      */
     private $id;
 
@@ -78,6 +80,10 @@ class User implements UserInterface
      *     message = "Ce Champ ne doit pas être vide."
      * )
      * @Groups({"user:read", "user:write"})
+     * @Groups({"Apprenant:read_A"})
+     * @Groups({"Formateur:read_F"})
+     * @Groups({"Promo:read_P"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $email;
 
@@ -94,6 +100,10 @@ class User implements UserInterface
      *     message = "Ce Champ ne doit pas être vide."
      * )
      * @Groups({"user:read", "user:write"})
+     * @Groups({"Apprenant:read_A"})
+     * @Groups({"Formateur:read_F"})
+     * @Groups({"Promo:read_P"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $prenom;
 
@@ -103,6 +113,10 @@ class User implements UserInterface
      *     message = "Ce Champ ne doit pas être vide."
      * )
      * @Groups({"user:read", "user:write"})
+     * @Groups({"Apprenant:read_A"})
+     * @Groups({"Formateur:read_F"})
+     * @Groups({"Promo:read_P"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $nom;
 
@@ -112,6 +126,10 @@ class User implements UserInterface
      *     message = "Ce Champ ne doit pas être vide."
      * )
      * @Groups({"user:read", "user:write"})
+     * @Groups({"Apprenant:read_A"})
+     * @Groups({"Formateur:read_F"})
+     * @Groups({"Promo:read_P"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $adresse;
 

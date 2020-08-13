@@ -12,6 +12,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ORM\Entity(repositoryClass=FormateurRepository::class)
  * @ApiResource(
+ *      normalizationContext={"groups"={"Formateur:read_F","Formateur:read_all"}},
  *       itemOperations={
  *                  "get"={
  *                          "path"="/formateurs/{id}",
@@ -26,6 +27,7 @@ class Formateur extends User
      * @ORM\Id()
      * @ORM\GeneratedValue()
      * @ORM\Column(type="integer")
+     * @Groups({"Formateur:read_F"})
      * @Groups({"Promo:read_P"})
      */
     private $id;
@@ -56,7 +58,7 @@ class Formateur extends User
      */
     public function getPromos(): Collection
     {
-        return $this->promos;
+       return $this->promos;
     }
 
     public function addPromo(Promo $promo): self

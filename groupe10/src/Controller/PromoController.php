@@ -14,6 +14,7 @@ use App\Repository\ApprenantRepository;
 use App\Repository\FormateurRepository;
 use Doctrine\ORM\EntityManagerInterface;
 use App\Repository\ReferentielRepository;
+use App\Repository\GroupeApprenantRepository;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
@@ -40,6 +41,61 @@ class PromoController extends AbstractController
                         return $this->json(["message" => "Vous n'avez pas ce privilége."], Response::HTTP_FORBIDDEN);
                 }
         }
+
+        /**
+        * @Route(path="/api/admin/promo/principal",
+        *        name="apigetGpPrincipal",
+        *        methods={"GET"},
+        *       defaults={
+        *          "_controller"="\app\ControllerPromoController::getGpPrincipal",
+        *         "_api_resource_class"=Promo::class,
+        *         "_api_collection_operation_name"="getGpPrincipal"
+        *         }
+        *)
+        */
+        public function getGpPrincipal(Request $request,SerializerInterface $serializer, EntityManagerInterface $entityManager,ValidatorInterface $validator, GroupeApprenantRepository $GaRepo, PromoRepository $PromoRepo)
+        {
+          $promo = new Promo();
+
+          if($this->isGranted("VIEW",$promo)){
+
+            $promo = $PromoRepo-> findAll();
+                        
+            if (!empty($promo)){
+                                        
+              $promoTab = $serializer->normalize($promo, 'json');
+
+              $groupeApprenant = new GroupeApprenant();
+              $groupeApprenant = $GaRepo -> findAll();
+
+              $total= count($promoTab);
+
+              $total2= count($groupeApprenant);
+
+              for ($i=0; $i < $total; $i++) {
+                for ($j=0; $j < $total2; $j++) {
+                  if (isset($promoTab[$i]["groupeApprenants"][$j])){
+                    $GroupeApprenant = $promoTab[$i]["groupeApprenants"][$j];
+                      $type = $GroupeApprenant["type"];
+                      if($type=="Principal"){
+                        $principal = $GaRepo -> findByType($type);
+                      }
+                  }
+                }
+              }
+
+              return $this->json($principal,Response::HTTP_OK,);
+
+            }else{
+              return $this->json(["message" => "Les groupes de compétences n'existe pas dans la base de données."], Response::HTTP_FORBIDDEN);
+            }
+              
+          }else{
+            return $this->json(["message" => "Vous n'avez pas ce privilége."], Response::HTTP_FORBIDDEN);
+          }
+
+        }
+
 
         /**
         * @Route(path="/api/admin/promo", name="api_add_promo", methods={"POST"})
@@ -110,10 +166,11 @@ class PromoController extends AbstractController
                               $message = (new \Swift_Message('Selections Sonatel Académie'))
                                     ->setFrom('bocar.diallo95@gmail.com')
                                     ->setTo($apprenantEmail)
-                                    ->setBody('Bonsoir Cher(e) candidat(e) de la Promotion 3 de sonatel Academy,
+                                    ->setBody('NB: ceci est un TEST de groupe de travail.
+                                                Bonsoir Cher(e) candidat(e) de la Promotion 3 de sonatel Academy,
                                                 Après les différentes étapes de sélection que tu as passé avec brio,
                                                 nous t’informons que ta candidature a été retenue pour intégrer la troisième promotion de la première école de codage gratuite du Sénégal.
-                                                Rendez-vous le 17 Février 2020 à 8 heures précises dans nos locaux du Orange Digital Center sis Immeuble Scalène Mermoz Ecole Police lot B Dakar. Merci de venir muni de ta pièce d’identité nationale ou passeport.')
+                                                Veuillez cliqué sur ce lien "http://bocar.alwaysdata.net/Projet_MVC/Gestionnaire/AddEtudiant" pour compléter vos informations.')
                                                 ;
                                     $mailer->send($message);
                             }
@@ -121,7 +178,6 @@ class PromoController extends AbstractController
                           }
 
                           $promo->addGroupeApprenant($groupeApprenants);
-
                         }
 
                         $token = substr($request->server->get("HTTP_AUTHORIZATION"), 7);
@@ -144,5 +200,483 @@ class PromoController extends AbstractController
                 else{
                         return $this->json(["message" => "Vous n'avez pas ce privilége."], Response::HTTP_FORBIDDEN);
                 }
+        }
+
+        /**
+        * @Route(path="/api/admin/promo/{id}/principal",
+        *        name="apigetPromoIdGpPrincipal",
+        *        methods={"GET"},
+        * defaults={
+        *          "_controller"="\app\ControllerPromoController::getPromoIdGpPrincipal",
+        *         "_api_resource_class"=Promo::class,
+        *         "_api_collection_operation_name"="getPromoIdGpPrincipal"
+        *         }
+        *)
+        */
+        public function getPromoIdGpPrincipal(Request $request,SerializerInterface $serializer, $id, EntityManagerInterface $entityManager,ValidatorInterface $validator, PromoRepository $PromoRepo, GroupeApprenantRepository $GaRepo)
+        {
+          $promo = new Promo();
+
+          if($this->isGranted("VIEW",$promo)){
+
+            //On détermine si la promo existe dans la base de données
+            $promo = $PromoRepo-> find($id);
+                        
+            if (isset($promo)){
+                                        
+              // On transforme l'objet promo en tableau.
+              $promoTab = $serializer->normalize($promo, 'json');
+
+              //On récupére les groupes apprenants de la promo qu'on met dans un tableau
+              $groupeApprenantsTab = $promoTab["groupeApprenants"];
+
+              foreach ($groupeApprenantsTab as $key => $value) {
+                $type = $value["type"];
+                if($type=="Principal"){
+                  return $this->json($value,Response::HTTP_OK,);
+                }
+              }
+
+            }else{
+              return $this->json(["message" => "Cette promo n'existe pas."], Response::HTTP_FORBIDDEN);
+            }
+              
+          }else{
+            return $this->json(["message" => "Vous n'avez pas ce privilége."], Response::HTTP_FORBIDDEN);
+          }
+
+        }
+
+        /**
+        * @Route(path="/api/admin/promo/{id}/referentiels",
+        *        name="apigetPromoIdReferentiel",
+        *        methods={"GET"},
+        * defaults={
+        *          "_controller"="\app\ControllerPromoController::getPromoIdReferentiel",
+        *         "_api_resource_class"=Promo::class,
+        *         "_api_collection_operation_name"="getPromoIdReferentiel"
+        *         }
+        *)
+        */
+        public function getPromoIdReferentiel(Request $request,SerializerInterface $serializer, $id, EntityManagerInterface $entityManager,ValidatorInterface $validator, PromoRepository $PromoRepo, ReferentielRepository $RefRepo)
+        {
+          $promo = new Promo();
+
+          if($this->isGranted("VIEW",$promo)){
+
+            //On détermine si la promo existe dans la base de données
+            $promo = $PromoRepo-> find($id);
+                        
+            if (isset($promo)){
+                                        
+              // On transforme l'objet promo en tableau.
+              $promoTab = $serializer->normalize($promo, 'json');
+
+              //On récupére les groupes apprenants de la promo qu'on met dans un tableau
+              $referentielTab = $promoTab["referentiel"];
+
+              return $this->json($referentielTab,Response::HTTP_OK,);
+
+            }else{
+              return $this->json(["message" => "Cette promo n'existe pas."], Response::HTTP_FORBIDDEN);
+            }
+              
+          }else{
+            return $this->json(["message" => "Vous n'avez pas ce privilége."], Response::HTTP_FORBIDDEN);
+          }
+
+        }
+
+        /**
+        * @Route(path="/api/admin/promo/{id}/groupe/{id2}/apprenants",
+        *        name="apigetPromoIdGroupeIdApprenants",
+        *        methods={"GET"},
+        * defaults={
+        *          "_controller"="\app\ControllerPromoController::getPromoIdGroupeIdApprenants",
+        *         "_api_resource_class"=Promo::class,
+        *         "_api_collection_operation_name"="getPromoIdGroupeIdApprenants"
+        *         }
+        *)
+        */
+        public function getPromoIdGroupeIdApprenants(Request $request,SerializerInterface $serializer, EntityManagerInterface $entityManager,ValidatorInterface $validator, PromoRepository $PromoRepo, GroupeApprenantRepository $GaRepo)
+        {
+          $promo = new Promo();
+
+          $uri = $request->getUri();
+          $uriTab = explode("/", $uri);
+          $id1 = $uriTab[6];
+          $id2 = $uriTab[8];
+
+          if($this->isGranted("VIEW",$promo)){
+
+            //On détermine si la promo existe dans la base de données
+            $promo = $PromoRepo-> find($id1);
+                        
+            if (isset($promo)){
+                                        
+              // On transforme l'objet promo en tableau.
+              $promoTab = $serializer->normalize($promo, 'json');
+
+              $groupeApprenant = new GroupeApprenant();
+
+              $groupeApprenant = $GaRepo-> find($id2);
+
+              if (isset($groupeApprenant)){
+                // On transforme l'objet  en tableau.
+                $groupeApprenantTab = $serializer->normalize($groupeApprenant, 'json');
+                //On récupére les groupes apprenants de la promo qu'on met dans un tableau
+                $apprenants = $groupeApprenantTab["apprenants"];
+
+                return $this->json($apprenants,Response::HTTP_OK,);
+              }
+              
+            }else{
+              return $this->json(["message" => "Cette promo n'existe pas."], Response::HTTP_FORBIDDEN);
+            }
+              
+          }else{
+            return $this->json(["message" => "Vous n'avez pas ce privilége."], Response::HTTP_FORBIDDEN);
+          }
+        }
+
+        /**
+        * @Route(path="/api/admin/promo/{id}/formateurs",
+        *        name="apigetPromoIdFormateurs",
+        *        methods={"GET"},
+        * defaults={
+        *          "_controller"="\app\ControllerPromoController::getPromoIdFormateurs",
+        *         "_api_resource_class"=Promo::class,
+        *         "_api_collection_operation_name"="getPromoIdFormateurs"
+        *         }
+        *)
+        */
+        public function getPromoIdFormateurs(Request $request,SerializerInterface $serializer, $id, EntityManagerInterface $entityManager,ValidatorInterface $validator, PromoRepository $PromoRepo, FormateurRepository $FormateurRepo)
+        {
+          $promo = new Promo();
+
+          if($this->isGranted("VIEW",$promo)){
+
+            //On détermine si la promo existe dans la base de données
+            $promo = $PromoRepo-> find($id);
+                        
+            if (isset($promo)){
+                                        
+              // On transforme l'objet promo en tableau.
+              $promoTab = $serializer->normalize($promo, 'json');
+
+              //On récupére les groupes apprenants de la promo qu'on met dans un tableau
+              $referentielTab = $promoTab["formateurs"];
+
+              return $this->json($referentielTab,Response::HTTP_OK,);
+
+            }else{
+              return $this->json(["message" => "Cette promo n'existe pas."], Response::HTTP_FORBIDDEN);
+            }
+              
+          }else{
+            return $this->json(["message" => "Vous n'avez pas ce privilége."], Response::HTTP_FORBIDDEN);
+          }
+        }
+
+        /**
+        * @Route(path="/api/admin/promo/{id}", name="apiputPromoId", methods={"PUT"})
+        */
+        public function PutPromoId(Request $request,SerializerInterface $serializer, $id, EntityManagerInterface $entityManager,ValidatorInterface $validator, PromoRepository $promoRepo, ReferentielRepository $refRepo)
+        {
+          $promo = new Promo();
+
+          if($this->isGranted("EDIT",$promo)){
+
+            // Get Body content of the Request
+            $promoJson = $request->getContent();
+
+            //On détermine si le groupe compétence existe dans la base de données
+            $promo = $promoRepo-> find($id);
+
+            if (isset($promo)){
+                                        
+              // On transforme les données json en tableau
+              $promoTab = $serializer->decode($promoJson, 'json');
+               
+              //On détermine si dans le tableau nous avons les champs libellé et descriptif sont rempli
+              //puis on les set.
+              if (!empty($promoTab["langue"])){
+                $promo->setLangue($promoTab["langue"]);
+              }
+              if (!empty($promoTab["titre"])){
+                $promo->setTitre($promoTab["titre"]);
+              }
+              if (!empty($promoTab["descriptif"])){
+                $promo->setDescriptif($promoTab["descriptif"]);
+              }
+              if (!empty($promoTab["lieu"])){
+                $promo->setLieu($promoTab["lieu"]);
+              }
+              if (!empty($promoTab["fabrique"])){
+                $promo->setFabrique($promoTab["fabrique"]);
+              }
+              if (!empty($promoTab["etat"])){
+                $promo->setEtat($promoTab["etat"]);
+              }
+
+              //On récupére les compétences qu'on met dans un tableau
+              $referentielTab = $promoTab["referentiel"];
+
+              if (!empty($referentielTab)){
+                    //On crée un objet
+                    $referentiel = new Referentiel();
+
+                    $referentiel = $refRepo-> find($referentielTab["id"]);
+                    
+                    $promo->setReferentiel($referentiel);
+              }
+
+              //$entityManager = $this->getDoctrine()->getManager();
+              $entityManager->persist($promo);
+              $entityManager->flush();
+              return new JsonResponse("success",Response::HTTP_CREATED,[],true);
+            }else{
+              return $this->json(["message" => "Cet Id n'existe pas."], Response::HTTP_FORBIDDEN);
+            }
+          }else{
+            return $this->json(["message" => "Vous n'avez pas ce privilége."], Response::HTTP_FORBIDDEN);
+          }
+        }
+
+        /**
+        * @Route(path="/api/admin/promo/{id}/formateurs", name="apiputPromoIdFormateur", methods={"PUT"})
+        */
+        public function PutPromoIdFormateur(Request $request,SerializerInterface $serializer, $id, EntityManagerInterface $entityManager,ValidatorInterface $validator, PromoRepository $promoRepo, FormateurRepository $formateurRepo)
+        {
+          $promo = new Promo();
+          $formateur = new Formateur();
+
+          if($this->isGranted("EDIT",$promo)){
+
+            // Get Body content of the Request
+            $promoJson = $request->getContent();
+
+            //On détermine si la promo existe dans la base de données
+            $promo = $promoRepo-> find($id);
+
+            if (isset($promo)){
+            // On transforme les données json en tableau
+            $promoTabBD = $serializer->normalize($promo, 'json');
+            //dd($promoTabBD);
+            $formateurPromo = $promoTabBD["formateurs"];
+            //dd($formateurTabBD);
+
+            foreach ($formateurPromo as $key => $value) {
+              $formateurEmailsPromo []= $value["email"];
+            }
+            //dd($formateurEmailsP);
+
+              // On transforme les données json en tableau
+              $promoTabPostman = $serializer->decode($promoJson, 'json');
+               
+              //On détermine si dans le tableau nous avons les champs libellé et descriptif sont rempli
+              //puis on les set.
+              if (!empty($promoTabPostman["langue"])){
+                $promo->setLangue($promoTabPostman["langue"]);
+              }
+              if (!empty($promoTabPostman["titre"])){
+                $promo->setTitre($promoTabPostman["titre"]);
+              }
+              if (!empty($promoTabPostman["descriptif"])){
+                $promo->setDescriptif($promoTabPostman["descriptif"]);
+              }
+              if (!empty($promoTabPostman["lieu"])){
+                $promo->setLieu($promoTabPostman["lieu"]);
+              }
+              if (!empty($promoTabPostman["fabrique"])){
+                $promo->setFabrique($promoTabPostman["fabrique"]);
+              }
+              if (!empty($promoTabPostman["etat"])){
+                $promo->setEtat($promoTabPostman["etat"]);
+              }
+
+              //On récupére les compétences qu'on met dans un tableau
+              $formateurTabPostman = $promoTabPostman["formateurs"];
+
+              foreach ($formateurTabPostman as $key => $value) {
+                $idPostman = $value["id"];
+                $formateur = $formateurRepo -> find($idPostman);
+                $formateurTabBD  = $serializer->normalize($formateur, 'json');
+                
+                $formateurEmailsPostman []= $formateurTabBD["email"];
+              }
+
+              foreach ($formateurEmailsPostman as $key => $value) {
+                foreach ($formateurEmailsPromo as $k => $v) {
+                  if($value==$v){
+                    $promo->removeFormateur($formateur);
+                  }else{
+                    $promo->addFormateur($formateur);
+                  }
+                }
+              }
+              
+
+              //$entityManager = $this->getDoctrine()->getManager();
+              $entityManager->persist($promo);
+              $entityManager->flush();
+              return new JsonResponse("success",Response::HTTP_CREATED,[],true);
+            }else{
+              return $this->json(["message" => "Cet Id n'existe pas."], Response::HTTP_FORBIDDEN);
+            }
+          }else{
+            return $this->json(["message" => "Vous n'avez pas ce privilége."], Response::HTTP_FORBIDDEN);
+          }
+
+        }
+
+        /**
+        * @Route(path="/api/admin/promo/{id}/groupes/{id2}", name="apiputPromoIdGroupesId", methods={"PUT"})
+        */
+        public function putPromoIdGroupesId(Request $request,SerializerInterface $serializer, EntityManagerInterface $entityManager,ValidatorInterface $validator, PromoRepository $PromoRepo, GroupeApprenantRepository $GaRepo)
+        {
+          $promo = new Promo();
+
+          $uri = $request->getUri();
+          $uriTab = explode("/", $uri);
+          $id1 = $uriTab[6];
+          $id2 = $uriTab[8];
+
+          if($this->isGranted("VIEW",$promo)){
+
+            //On détermine si la promo existe dans la base de données
+            $promo = $PromoRepo-> find($id1);
+                        
+            if (isset($promo)){
+                                        
+              // On transforme l'objet promo en tableau.
+              $promoTab = $serializer->normalize($promo, 'json');
+
+              $groupeApprenant = new GroupeApprenant();
+
+              $groupeApprenant = $GaRepo-> find($id2);
+
+              if (isset($groupeApprenant)){
+                // On transforme l'objet  en tableau.
+                $groupeApprenantTab = $serializer->normalize($groupeApprenant, 'json');
+
+                $type = $groupeApprenantTab["type"];
+
+                if($type=="Principal"){
+                  return $this->json(["message" => "Vous ne pouvez pas modifier le statut du groupe principal."], Response::HTTP_FORBIDDEN);
+                }else{
+                  $statut = $groupeApprenantTab["statut"];
+                  if ($statut == "actif"){
+                    $statutModifier = "inactif";
+                    $groupeApprenant->setStatut($statutModifier);
+                  }else{
+                    $statutModifier = "actif";
+                    $groupeApprenant->setStatut($statutModifier);
+                  }
+                  $entityManager->persist($promo);
+                  $entityManager->flush();
+                  return new JsonResponse("Statut modifié à $statutModifier",Response::HTTP_CREATED,[],true);
+                }
+
+              }
+              
+            }else{
+              return $this->json(["message" => "Cette promo n'existe pas."], Response::HTTP_FORBIDDEN);
+            }
+              
+          }else{
+            return $this->json(["message" => "Vous n'avez pas ce privilége."], Response::HTTP_FORBIDDEN);
+          }
+        }
+
+        /**
+        * @Route(path="/api/admin/promo/{id}/apprenants", name="apiputPromoIdApprenants", methods={"PUT"})
+        */
+        public function putPromoIdApprenants(Request $request,SerializerInterface $serializer, $id, EntityManagerInterface $entityManager,ValidatorInterface $validator, PromoRepository $promoRepo, ApprenantRepository $apprenantRepo, GroupeApprenantRepository $GaRepo)
+        {
+          $promo = new Promo();
+          $apprenant = new Apprenant();
+          $groupeApprenant = new GroupeApprenant();
+
+          if($this->isGranted("EDIT",$promo)){
+
+            // Get Body content of the Request
+            $promoJson = $request->getContent();
+
+            // On transforme les données json en tableau
+            $promoTabPostman = $serializer->decode($promoJson, 'json');
+
+            $groupeApprenantPostman = $promoTabPostman["groupeApprenants"];
+
+            foreach ($groupeApprenantPostman as $key => $value) {
+              $apprenantPostmanTab = $value["apprenants"];
+              foreach ($apprenantPostmanTab as $k => $v) {
+                $apprenant = $apprenantRepo->findByEmail($v["email"]);
+                if ($apprenant){
+                  $emailPostman []= $v["email"];
+                }else{
+                  return $this->json(["message" => "Cet apprenant n'existe pas."], Response::HTTP_FORBIDDEN);
+                }
+              }
+            }
+
+            //On détermine si la promo existe dans la base de données
+            $promo = $promoRepo-> find($id);
+
+            if (isset($promo)){
+            // On transforme les données json en tableau
+            $promoTabBD = $serializer->normalize($promo, 'json');
+            //dd($promoTabBD);
+            $groupeApprenantPromo = $promoTabBD["groupeApprenants"];
+
+            //dd($groupeApprenantPromo);
+
+            foreach ($groupeApprenantPromo as $key => $value) {
+              $groupeApprenant = $GaRepo->findByName($value["nom"]);
+
+                $groupes [] = $value["type"];
+                foreach ($groupes as $k => $v) {
+                  if($v == "Principal"){
+                    $apprenantTab = $value["apprenants"];
+                  }
+                }
+            }
+
+            foreach ($apprenantTab as $key => $value) {
+              $emailTabBD []= $value["email"];
+            }
+
+//Le dénormalize ne fonctionne pas bien à revoir --- Le dénormalize ne fonctionne pas bien à revoir --- Le dénormalize ne fonctionne pas bien à revoir --- Le dénormalize ne fonctionne pas bien à revoir --- Le dénormalize ne fonctionne pas bien à revoir --- Le dénormalize ne fonctionne pas bien à revoir --- Le dénormalize ne fonctionne pas bien à revoir 
+              foreach ($emailPostman as $c => $d) {
+                $apprenant = new Apprenant();
+                $apprenant = $apprenantRepo->findByEmail($d);
+
+                foreach ($apprenant as $e => $f) {
+                  foreach ($emailTabBD as $a => $b) {
+                    if($d==$b){
+                      $groupeApprenant->removeApprenant($f);
+                    }else{
+                      //dd(gettype($apprenant));
+                      //$f = $serializer->serialize($f, "json");
+                      $groupeApprenant->addApprenant($f);
+                    }
+                  }
+                }
+              }
+
+              $promo->addGroupeApprenant($groupeApprenant);
+              //dd($promo);
+
+              //$entityManager = $this->getDoctrine()->getManager();
+              $entityManager->persist($promo);
+              $entityManager->flush();
+              return new JsonResponse("success",Response::HTTP_CREATED,[],true);
+            }else{
+              return $this->json(["message" => "Cet Id n'existe pas."], Response::HTTP_FORBIDDEN);
+            }
+          }else{
+            return $this->json(["message" => "Vous n'avez pas ce privilége."], Response::HTTP_FORBIDDEN);
+          }
+
         }
 }

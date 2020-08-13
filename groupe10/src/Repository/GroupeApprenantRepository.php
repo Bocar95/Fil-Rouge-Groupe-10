@@ -47,4 +47,24 @@ class GroupeApprenantRepository extends ServiceEntityRepository
         ;
     }
     */
+
+    public function findByType($value)
+    {
+        return $this->createQueryBuilder('ga')
+            ->andWhere('ga.type = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
+
+    public function findByName($value)
+    {
+        return $this->createQueryBuilder('ga')
+            ->andWhere('ga.nom = :val')
+            ->setParameter('val', $value)
+            ->getQuery()
+            ->getResult()
+        ;
+    }
 }

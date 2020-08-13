@@ -64,6 +64,7 @@ class Referentiel
      * @ORM\Column(type="string", length=255)
      * @Groups({"Referentiel:read_R"})
      * @Groups({"Promo:read_P"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $libelle;
 
@@ -71,6 +72,7 @@ class Referentiel
      * @ORM\Column(type="string", length=255)
      * @Groups({"Referentiel:read_R"})
      * @Groups({"Promo:read_P"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $presentation;
 
@@ -78,6 +80,7 @@ class Referentiel
      * @ORM\Column(type="blob", length=255, nullable=true)
      * @Groups({"Referentiel:read_R"})
      * @Groups({"Promo:read_P"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $programme;
 
@@ -85,6 +88,7 @@ class Referentiel
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"Referentiel:read_R"})
      * @Groups({"Promo:read_P"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $critereEvaluation;
 
@@ -92,6 +96,7 @@ class Referentiel
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"Referentiel:read_R"})
      * @Groups({"Promo:read_P"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $critereAdmission;
 
@@ -99,6 +104,7 @@ class Referentiel
      * @ORM\ManyToMany(targetEntity=GroupeCompetences::class, mappedBy="referentiel")
      * @Groups({"Referentiel:read_R"})
      * @Groups({"Promo:read_P"})
+     * @Groups({"GroupeApprenant:read_GA"})
      * @ApiSubresource()
      */
     private $groupeCompetences;

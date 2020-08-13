@@ -13,6 +13,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
 /**
  * @ORM\Entity(repositoryClass=ApprenantRepository::class)
  * @ApiResource(
+ *      normalizationContext={"groups"={"Apprenant:read_A","Apprenant:read_all"}},
  *       itemOperations={
  *                  "get"={
  *                          "path"="/apprenants/{id}",
@@ -33,18 +34,24 @@ class Apprenant extends User
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"Apprenant:read_A"})
+     * @Groups({"GroupeApprenant:read_GA"})
      * @Groups({"Promo:read_P"})
      */
     private $genre;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"Apprenant:read_A"})
+     * @Groups({"GroupeApprenant:read_GA"})
      * @Groups({"Promo:read_P"})
      */
     private $statut;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"Apprenant:read_A"})
+     * @Groups({"GroupeApprenant:read_GA"})
      * @Groups({"Promo:read_P"})
      */
     private $infoComplementaire;
@@ -103,10 +110,10 @@ class Apprenant extends User
     /**
      * @return Collection|GroupeApprenant[]
      */
-    public function getGroupeApprenants(): Collection
-    {
-        return $this->groupeApprenants;
-    }
+    //public function getGroupeApprenants(): Collection
+    //{
+    //    return $this->groupeApprenants;
+    //}
 
     public function addGroupeApprenant(GroupeApprenant $groupeApprenant): self
     {

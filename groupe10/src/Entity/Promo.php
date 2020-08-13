@@ -6,6 +6,7 @@ use Doctrine\ORM\Mapping as ORM;
 use App\Repository\PromoRepository;
 use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
+use ApiPlatform\Core\Annotation\ApiSubresource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
@@ -15,10 +16,66 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *      normalizationContext={"groups"={"Promo:read_P","Promo:read_all"}},
  *      collectionOperations={
  *          "get"={"path"="/admin/promo"},
+ *          "getGpPrincipal"={
+ *                              "methods"="get",
+ *                              "path"="/admin/promo/principal",
+ *                              "route_name"="apigetGpPrincipal"
+ *                            },
  *          "post"={
  *                  "security_post_denormalize"="is_granted('EDIT', object)",
  *                  "security_post_denormalize_message"="Vous n'avez pas ce privilége.",
  *                  "path"="/admin/promo"
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *                  "security_post_denormalize"="is_granted('VIEW', object)",
+ *                  "security_post_denormalize_message"="Vous n'avez pas ce privilége.",
+ *                  "path"="/admin/promo/{id}",
+ *                  "defaults"={"id"=null}
+ *          },
+ *          "getPromoIdGpPrincipal"={"methods"="get",
+ *                  "path"="/admin/promo/{id}/principal",
+ *                  "defaults"={"id"=null},
+ *                  "route_name"="apigetPromoIdGpPrincipal"
+ *          },
+ *          "getPromoIdReferentiel"={"methods"="get",
+ *                  "path"="/admin/promo/{id}/referentiels",
+ *                  "defaults"={"id"=null},
+ *                  "route_name"="apigetPromoIdReferentiel"
+ *          },
+ *          "getPromoIdGroupeIdApprenants"={"methods"="get",
+ *                  "path"="/admin/promo/{id}/groupe/{id}/apprenants",
+ *                  "defaults"={"id"=null},
+ *                  "route_name"="apigetPromoIdGroupeIdApprenants"
+ *          },
+ *          "getPromoIdFormateurs"={"methods"="get",
+ *                  "path"="/admin/promo/{id}/formateurs",
+ *                  "defaults"={"id"=null},
+ *                  "route_name"="apigetPromoIdFormateurs"
+ *          },
+ *          "putPromoId"={"methods"="put",
+ *                  "path"="/admin/promo/{id}",
+ *                  "defaults"={"id"=null},
+ *                  "route_name"="apiputPromoId"
+ *          },
+ *          "putPromoId"={"methods"="put",
+ *                  "security_post_denormalize"="is_granted('EDIT', object)",
+ *                  "path"="/admin/promo/{id}/formateurs",
+ *                  "defaults"={"id"=null},
+ *                  "route_name"="apiputPromoIdFormateur"
+ *          },
+ *          "putPromoIdGroupesId"={"methods"="put",
+ *                  "security_post_denormalize"="is_granted('EDIT', object)",
+ *                  "path"="/admin/promo/{id}/groupes/{id}",
+ *                  "defaults"={"id"=null},
+ *                  "route_name"="apiputPromoIdGroupesId"
+ *          },
+ *          "putPromoIdAprenants"={"methods"="put",
+ *                  "security_post_denormalize"="is_granted('EDIT', object)",
+ *                  "path"="/admin/promo/{id}/apprenants",
+ *                  "defaults"={"id"=null},
+ *                  "route_name"="apiputPromoIdAprenants"
  *          }
  *      }
  * )
@@ -36,72 +93,84 @@ class Promo
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"Promo:read_P"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $langue;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"Promo:read_P"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $titre;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"Promo:read_P"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"Promo:read_P"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $lieu;
 
     /**
      * @ORM\Column(type="date")
      * @Groups({"Promo:read_P"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $dateDebut;
 
     /**
      * @ORM\Column(type="date")
      * @Groups({"Promo:read_P"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $dateFinProvisoire;
 
     /**
      * @ORM\Column(type="date", nullable=true)
      * @Groups({"Promo:read_P"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $dateFinReelle;
 
     /**
      * @ORM\Column(type="string", length=255)
      * @Groups({"Promo:read_P"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $fabrique;
 
     /**
      * @ORM\Column(type="boolean")
      * @Groups({"Promo:read_P"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $etat;
 
     /**
      * @ORM\ManyToOne(targetEntity=Referentiel::class, inversedBy="promos")
      * @Groups({"Promo:read_P"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $referentiel;
 
     /**
      * @ORM\ManyToMany(targetEntity=Formateur::class, inversedBy="promos")
      * @Groups({"Promo:read_P"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $formateurs;
 
     /**
      * @ORM\OneToMany(targetEntity=GroupeApprenant::class, mappedBy="promo", cascade="persist")
      * @Groups({"Promo:read_P"})
+     * @ApiSubresource
      */
     private $groupeApprenants;
 

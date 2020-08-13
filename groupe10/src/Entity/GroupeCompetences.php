@@ -19,7 +19,7 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *                  "get"={"path"="/admin/grpCompetences"},
  *                  "getGrpCompetences"={"methods"="get",
  *                                     "path"="/admin/grpCompetences/competences",
- *                                     "route_name"="apiGetGrpCompetences"
+ *                                     "route_name"="apiGetGrpCompCompetences"
  *                                      },
  *                  "post"={
  *                          "security_post_denormalize"="is_granted('EDIT', object)",
@@ -63,6 +63,7 @@ class GroupeCompetences
      * @ORM\Column(type="string", length=255)
      * @Groups({"GroupeCompetences:read_M"})
      * @Groups({"Referentiel:read_R"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $libelle;
 
@@ -70,6 +71,7 @@ class GroupeCompetences
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"GroupeCompetences:read_M"})
      * @Groups({"Referentiel:read_R"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $descriptif;
 
@@ -77,6 +79,7 @@ class GroupeCompetences
      * @ORM\ManyToMany(targetEntity=Competences::class, inversedBy="groupeCompetences", cascade="persist")
      * @Groups({"GroupeCompetences:read_M", "GroupeCompetences:write"})
      * @Groups({"Referentiel:read_R"})
+     * @Groups({"GroupeApprenant:read_GA"})
      * @ApiSubresource()
      */
     private $competences;

@@ -10,8 +10,42 @@ use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
  * @ORM\Entity(repositoryClass=GroupeApprenantRepository::class)
+ * @ApiResource(
+ *      normalizationContext={"groups"={"GroupeApprenant:read_GA","GroupeApprenant:read_all"}},
+ *      collectionOperations={
+ *          "get"={"path"="/admin/groupes"},
+ *          "getGroupesApprenants"={
+ *                              "methods"="get",
+ *                              "path"="/admin/groupes/apprenants",
+ *                              "route_name"="apigetGroupesApprenants"
+ *                            },
+ *          "post"={
+ *                  "security_post_denormalize"="is_granted('EDIT', object)",
+ *                  "security_post_denormalize_message"="Vous n'avez pas ce privilége.",
+ *                  "path"="/admin/groupes"
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *                  "security_post_denormalize"="is_granted('VIEW', object)",
+ *                  "path"="/admin/groupes/{id}",
+ *                  "defaults"={"id"=null}
+ *          },
+ *          "PutGroupesId"={"methods"="put",
+ *                  "security_post_denormalize"="is_granted('EDIT', object)",
+ *                  "path"="/admin/groupes/{id}",
+ *                  "defaults"={"id"=null},
+ *                  "route_name"="apiPutGroupesId"
+ *          },
+ *          "deleteGroupesIdApprenant"={"methods"="delete",
+ *                  "security_post_denormalize"="is_granted('EDIT', object)",
+ *                  "path"="/admin/groupes/{id}/apprenant",
+ *                  "defaults"={"id"=null},
+ *                  "route_name"="apideleteGroupesIdApprenant"
+ *          }
+ *      }
+ * )
  */
 class GroupeApprenant
 {
@@ -25,41 +59,48 @@ class GroupeApprenant
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"GroupeApprenant:read_GA"})
      * @Groups({"Promo:read_P"})
      */
     private $nom;
 
     /**
      * @ORM\Column(type="date")
+     * @Groups({"GroupeApprenant:read_GA"})
      * @Groups({"Promo:read_P"})
      */
     private $dateCreation;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"GroupeApprenant:read_GA"})
      * @Groups({"Promo:read_P"})
      */
     private $statut;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"GroupeApprenant:read_GA"})
      * @Groups({"Promo:read_P"})
      */
     private $type;
 
     /**
      * @ORM\ManyToOne(targetEntity=Promo::class, inversedBy="groupeApprenants")
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $promo;
 
     /**
      * @ORM\ManyToMany(targetEntity=Apprenant::class, inversedBy="groupeApprenants", cascade="persist")
+     * @Groups({"GroupeApprenant:read_GA"})
      * @Groups({"Promo:read_P"})
      */
     private $apprenants;
 
     /**
      * @ORM\ManyToMany(targetEntity=Formateur::class, inversedBy="groupeApprenants")
+     * @Groups({"GroupeApprenant:read_GA"})
      * @Groups({"Promo:read_P"})
      */
     private $formateurs;

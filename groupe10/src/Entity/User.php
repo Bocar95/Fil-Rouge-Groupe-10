@@ -126,12 +126,20 @@ class User implements UserInterface
      *     message = "Ce Champ ne doit pas être vide."
      * )
      * @Groups({"user:read", "user:write"})
-     * @Groups({"Apprenant:read_A"})
      * @Groups({"Formateur:read_F"})
      * @Groups({"Promo:read_P"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"Apprenant:read_A"})
      */
     private $adresse;
+
+    /**
+     * @ORM\Column(type="boolean", nullable=true)
+     * @Groups({"Promo:read_P"})
+     * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"Apprenant:read_A"})
+     */
+    private $isConnected;
 
     public function getId(): ?int
     {
@@ -261,6 +269,18 @@ class User implements UserInterface
     public function setAdresse(string $adresse): self
     {
         $this->adresse = $adresse;
+
+        return $this;
+    }
+
+    public function getIsConnected(): ?bool
+    {
+        return $this->isConnected;
+    }
+
+    public function setIsConnected(bool $isConnected): self
+    {
+        $this->isConnected = $isConnected;
 
         return $this;
     }

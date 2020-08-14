@@ -21,6 +21,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *                              "path"="/admin/promo/principal",
  *                              "route_name"="apigetGpPrincipal"
  *                            },
+ *          "getApprenantsAttente"={
+ *                              "methods"="get",
+ *                              "path"="/admin/promo/apprenants/attente",
+ *                              "route_name"="apiGetApprenantsAttente"
+ *                            },
  *          "post"={
  *                  "security_post_denormalize"="is_granted('EDIT', object)",
  *                  "security_post_denormalize_message"="Vous n'avez pas ce privilége.",
@@ -44,6 +49,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *                  "defaults"={"id"=null},
  *                  "route_name"="apigetPromoIdReferentiel"
  *          },
+ *          "getPromoIdApprenantsAttente"={
+ *                              "methods"="get",
+ *                              "path"="/admin/promo/{id}/apprenants/attente",
+ *                              "route_name"="apiGetPromoIdApprenantsAttente"
+ *                            },
  *          "getPromoIdGroupeIdApprenants"={"methods"="get",
  *                  "path"="/admin/promo/{id}/groupe/{id}/apprenants",
  *                  "defaults"={"id"=null},

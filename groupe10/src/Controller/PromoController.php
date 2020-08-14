@@ -93,6 +93,47 @@ class PromoController extends AbstractController
           }else{
             return $this->json(["message" => "Vous n'avez pas ce privilége."], Response::HTTP_FORBIDDEN);
           }
+        }
+
+        /**
+        * @Route(path="/api/admin/promo/apprenants/attente",
+        *        name="apiGetApprenantsAttente",
+        *        methods={"GET"}
+        *)
+        */
+        public function GetApprenantsAttente(Request $request,SerializerInterface $serializer, EntityManagerInterface $entityManager,ValidatorInterface $validator, GroupeApprenantRepository $GaRepo, PromoRepository $PromoRepo)
+        {
+          $newPromo = new Promo();
+
+          if($this->isGranted("VIEW",$newPromo)){
+
+            $promoTab = $PromoRepo-> findAll();
+                        
+            if (isset($promoTab)){
+              foreach ($promoTab as $promoKey => $promoValue) {
+                $promoValue = $serializer->normalize($promoValue, 'json');
+                  $groupeApprenantTab [] = $promoValue["groupeApprenants"];
+              }
+
+              foreach ($groupeApprenantTab as $gAkey => $gAValue) {
+                foreach ($gAValue as $k => $element) {
+                  $apprenantTab [] = $element["apprenants"];
+                }
+              }
+
+              foreach ($apprenantTab as $apprenantTabKey => $apprenantTabValue) {
+                foreach ($apprenantTabValue as $appTabElementKey => $appTabElementValue) {
+                  if (!$appTabElementValue["isConnected"]){
+                    $apprenantAttente [] = $appTabElementValue;
+                  }
+                }
+              }
+              return $this->json($apprenantAttente,Response::HTTP_OK,);
+            }
+
+          }else{
+            return $this->json(["message" => "Vous n'avez pas ce privilége."], Response::HTTP_FORBIDDEN);
+          }
 
         }
 
@@ -281,6 +322,45 @@ class PromoController extends AbstractController
               return $this->json(["message" => "Cette promo n'existe pas."], Response::HTTP_FORBIDDEN);
             }
               
+          }else{
+            return $this->json(["message" => "Vous n'avez pas ce privilége."], Response::HTTP_FORBIDDEN);
+          }
+
+        }
+
+        /**
+        * @Route(path="/api/admin/promo/{id}/apprenants/attente",
+        *        name="apiGetPromoIdApprenantsAttente",
+        *        methods={"GET"}
+        *)
+        */
+        public function GetPromoIdApprenantsAttente(Request $request, $id,SerializerInterface $serializer, EntityManagerInterface $entityManager,ValidatorInterface $validator, GroupeApprenantRepository $GaRepo, PromoRepository $PromoRepo)
+        {
+          $newPromo = new Promo();
+
+          if($this->isGranted("VIEW",$newPromo)){
+
+            $newPromo = $PromoRepo-> find($id);
+                        
+            if (isset($newPromo)){
+              $newPromo = $serializer->normalize($newPromo, 'json');
+              $groupeApprenant = $newPromo["groupeApprenants"];
+
+              foreach ($groupeApprenant as $gAkey => $gAValue) {
+                $apprenantTab [] = $gAValue["apprenants"];
+              }
+              
+
+              foreach ($apprenantTab as $apprenantTabKey => $apprenantTabValue) {
+                foreach ($apprenantTabValue as $appTabElementKey => $appTabElementValue) {
+                  if (!$appTabElementValue["isConnected"]){
+                    $apprenantAttente [] = $appTabElementValue;
+                  }
+                }
+              }
+              return $this->json($apprenantAttente,Response::HTTP_OK,);
+            }
+
           }else{
             return $this->json(["message" => "Vous n'avez pas ce privilége."], Response::HTTP_FORBIDDEN);
           }
@@ -638,10 +718,11 @@ class PromoController extends AbstractController
                 foreach ($groupes as $k => $v) {
                   if($v == "Principal"){
                     $apprenantTab = $value["apprenants"];
+     
                   }
                 }
             }
-
+            
             foreach ($apprenantTab as $key => $value) {
               $emailTabBD []= $value["email"];
             }
@@ -654,23 +735,23 @@ class PromoController extends AbstractController
                 foreach ($apprenant as $e => $f) {
                   foreach ($emailTabBD as $a => $b) {
                     if($d==$b){
-                      $groupeApprenant->removeApprenant($f);
+                      $groupeApprenant[0]->removeApprenant($apprenant[0]);
+                      $message = "Supprimer";
                     }else{
-                      //dd(gettype($apprenant));
-                      //$f = $serializer->serialize($f, "json");
-                      $groupeApprenant->addApprenant($f);
+                      $groupeApprenant[0]->addApprenant($apprenant[0]);
+                      $message = "Ajouter";
                     }
                   }
                 }
               }
 
-              $promo->addGroupeApprenant($groupeApprenant);
+              $promo->addGroupeApprenant($groupeApprenant[0]);
               //dd($promo);
 
               //$entityManager = $this->getDoctrine()->getManager();
               $entityManager->persist($promo);
               $entityManager->flush();
-              return new JsonResponse("success",Response::HTTP_CREATED,[],true);
+              return new JsonResponse("$message",Response::HTTP_CREATED,[],true);
             }else{
               return $this->json(["message" => "Cet Id n'existe pas."], Response::HTTP_FORBIDDEN);
             }

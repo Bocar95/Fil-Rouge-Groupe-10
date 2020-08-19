@@ -81,11 +81,11 @@ use Symfony\Component\Serializer\Annotation\Groups;
  *                  "defaults"={"id"=null},
  *                  "route_name"="apiputPromoIdGroupesId"
  *          },
- *          "putPromoIdAprenants"={"methods"="put",
+ *          "putPromoIdApprenants"={"methods"="put",
  *                  "security_post_denormalize"="is_granted('EDIT', object)",
  *                  "path"="/admin/promo/{id}/apprenants",
  *                  "defaults"={"id"=null},
- *                  "route_name"="apiputPromoIdAprenants"
+ *                  "route_name"="apiputPromoIdApprenants"
  *          }
  *      }
  * )
@@ -189,10 +189,22 @@ class Promo
      */
     private $admin;
 
+    /**
+     * @ORM\OneToMany(targetEntity=PromoBrief::class, mappedBy="promo")
+     */
+    private $promoBrief;
+
+    /**
+     * @ORM\OneToMany(targetEntity=StatistiquesCompetences::class, mappedBy="promo")
+     */
+    private $statistiquesCompetences;
+
     public function __construct()
     {
         $this->groupeApprenants = new ArrayCollection();
         $this->formateurs = new ArrayCollection();
+        $this->promoBrief = new ArrayCollection();
+        $this->statistiquesCompetences = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -385,6 +397,68 @@ class Promo
     public function setAdmin(?Admin $admin): self
     {
         $this->admin = $admin;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PromoBrief[]
+     */
+    public function getPromoBrief(): Collection
+    {
+        return $this->promoBrief;
+    }
+
+    public function addPromoBrief(PromoBrief $promoBrief): self
+    {
+        if (!$this->promoBrief->contains($promoBrief)) {
+            $this->promoBrief[] = $promoBrief;
+            $promoBrief->setPromo($this);
+        }
+
+        return $this;
+    }
+
+    public function removePromoBrief(PromoBrief $promoBrief): self
+    {
+        if ($this->promoBrief->contains($promoBrief)) {
+            $this->promoBrief->removeElement($promoBrief);
+            // set the owning side to null (unless already changed)
+            if ($promoBrief->getPromo() === $this) {
+                $promoBrief->setPromo(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|StatistiquesCompetences[]
+     */
+    public function getStatistiquesCompetences(): Collection
+    {
+        return $this->statistiquesCompetences;
+    }
+
+    public function addStatistiquesCompetence(StatistiquesCompetences $statistiquesCompetence): self
+    {
+        if (!$this->statistiquesCompetences->contains($statistiquesCompetence)) {
+            $this->statistiquesCompetences[] = $statistiquesCompetence;
+            $statistiquesCompetence->setPromo($this);
+        }
+
+        return $this;
+    }
+
+    public function removeStatistiquesCompetence(StatistiquesCompetences $statistiquesCompetence): self
+    {
+        if ($this->statistiquesCompetences->contains($statistiquesCompetence)) {
+            $this->statistiquesCompetences->removeElement($statistiquesCompetence);
+            // set the owning side to null (unless already changed)
+            if ($statistiquesCompetence->getPromo() === $this) {
+                $statistiquesCompetence->setPromo(null);
+            }
+        }
 
         return $this;
     }

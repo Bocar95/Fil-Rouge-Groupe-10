@@ -2,6 +2,8 @@
 
 namespace App\Entity;
 
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use App\Repository\NiveauRepository;
 use ApiPlatform\Core\Annotation\ApiResource;
@@ -46,6 +48,21 @@ class Niveau
      * @ORM\ManyToOne(targetEntity=Competences::class, inversedBy="niveau")
      */
     private $competences;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Brief::class, inversedBy="niveaux")
+     */
+    private $brief;
+
+    /**
+     * @ORM\ManyToMany(targetEntity=LivrablesPartiels::class, inversedBy="niveaux")
+     */
+    private $livrablesPartiels;
+
+    public function __construct()
+    {
+        $this->livrablesPartiels = new ArrayCollection();
+    }
 
     public function getId(): ?int
     {
@@ -96,6 +113,44 @@ class Niveau
     public function setCompetences(?Competences $competences): self
     {
         $this->competences = $competences;
+
+        return $this;
+    }
+
+    public function getBrief(): ?Brief
+    {
+        return $this->brief;
+    }
+
+    public function setBrief(?Brief $brief): self
+    {
+        $this->brief = $brief;
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|LivrablesPartiels[]
+     */
+    public function getLivrablesPartiels(): Collection
+    {
+        return $this->livrablesPartiels;
+    }
+
+    public function addLivrablesPartiel(LivrablesPartiels $livrablesPartiel): self
+    {
+        if (!$this->livrablesPartiels->contains($livrablesPartiel)) {
+            $this->livrablesPartiels[] = $livrablesPartiel;
+        }
+
+        return $this;
+    }
+
+    public function removeLivrablesPartiel(LivrablesPartiels $livrablesPartiel): self
+    {
+        if ($this->livrablesPartiels->contains($livrablesPartiel)) {
+            $this->livrablesPartiels->removeElement($livrablesPartiel);
+        }
 
         return $this;
     }

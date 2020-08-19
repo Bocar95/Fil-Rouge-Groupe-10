@@ -105,10 +105,16 @@ class GroupeApprenant
      */
     private $formateurs;
 
+    /**
+     * @ORM\ManyToMany(targetEntity=Brief::class, mappedBy="groupeApprenant")
+     */
+    private $briefs;
+
     public function __construct()
     {
         $this->apprenants = new ArrayCollection();
         $this->formateurs = new ArrayCollection();
+        $this->briefs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -223,6 +229,34 @@ class GroupeApprenant
     {
         if ($this->formateurs->contains($formateur)) {
             $this->formateurs->removeElement($formateur);
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|Brief[]
+     */
+    public function getBriefs(): Collection
+    {
+        return $this->briefs;
+    }
+
+    public function addBrief(Brief $brief): self
+    {
+        if (!$this->briefs->contains($brief)) {
+            $this->briefs[] = $brief;
+            $brief->addGroupeApprenant($this);
+        }
+
+        return $this;
+    }
+
+    public function removeBrief(Brief $brief): self
+    {
+        if ($this->briefs->contains($brief)) {
+            $this->briefs->removeElement($brief);
+            $brief->removeGroupeApprenant($this);
         }
 
         return $this;

@@ -670,7 +670,15 @@ class PromoController extends AbstractController
         }
 
         /**
-        * @Route(path="/api/admin/promo/{id}/apprenants", name="apiputPromoIdApprenants", methods={"PUT"})
+        * @Route(path="/api/admin/promo/{id}/apprenants",
+        * name="apiputPromoIdApprenants",
+        * methods={"PUT"},
+        *       defaults={
+        *          "_controller"="\app\ControllerPromoController::putPromoIdApprenants",
+        *         "_api_resource_class"=Promo::class,
+        *         "_api_collection_operation_name"="putPromoIdApprenants"
+        *         }
+        *)
         */
         public function putPromoIdApprenants(Request $request,SerializerInterface $serializer, $id, EntityManagerInterface $entityManager,ValidatorInterface $validator, PromoRepository $promoRepo, ApprenantRepository $apprenantRepo, GroupeApprenantRepository $GaRepo)
         {

@@ -31,6 +31,6 @@ services:
     # please note that last definitions always *replace* previous ones
 
     # changer le statut isConnected
-    App\EventListener\LoginListener:
-        tags:
-            - { name: 'kernel.event_listener', event: 'security.authentication.success'}
+    # App\EventListener\LoginListener:
+    #    tags:
+    #        - { name: 'kernel.event_listener', event: 'security.authentication.success'}

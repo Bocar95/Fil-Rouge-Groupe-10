@@ -61,6 +61,7 @@ class GroupeApprenant
      * @ORM\Column(type="string", length=255)
      * @Groups({"GroupeApprenant:read_GA"})
      * @Groups({"Promo:read_P"})
+     * @Groups({"Brief:read_B"})
      */
     private $nom;
 
@@ -68,6 +69,7 @@ class GroupeApprenant
      * @ORM\Column(type="date")
      * @Groups({"GroupeApprenant:read_GA"})
      * @Groups({"Promo:read_P"})
+     * @Groups({"Brief:read_B"})
      */
     private $dateCreation;
 
@@ -75,6 +77,7 @@ class GroupeApprenant
      * @ORM\Column(type="string", length=255)
      * @Groups({"GroupeApprenant:read_GA"})
      * @Groups({"Promo:read_P"})
+     * @Groups({"Brief:read_B"})
      */
     private $statut;
 
@@ -82,6 +85,7 @@ class GroupeApprenant
      * @ORM\Column(type="string", length=255)
      * @Groups({"GroupeApprenant:read_GA"})
      * @Groups({"Promo:read_P"})
+     * @Groups({"Brief:read_B"})
      */
     private $type;
 
@@ -95,6 +99,7 @@ class GroupeApprenant
      * @ORM\ManyToMany(targetEntity=Apprenant::class, inversedBy="groupeApprenants", cascade="persist")
      * @Groups({"GroupeApprenant:read_GA"})
      * @Groups({"Promo:read_P"})
+     * @Groups({"Brief:read_B"})
      */
     private $apprenants;
 
@@ -102,11 +107,13 @@ class GroupeApprenant
      * @ORM\ManyToMany(targetEntity=Formateur::class, inversedBy="groupeApprenants")
      * @Groups({"GroupeApprenant:read_GA"})
      * @Groups({"Promo:read_P"})
+     * @Groups({"Brief:read_B"})
      */
     private $formateurs;
 
     /**
      * @ORM\ManyToMany(targetEntity=Brief::class, mappedBy="groupeApprenant")
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $briefs;
 

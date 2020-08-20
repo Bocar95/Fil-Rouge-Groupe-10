@@ -2,15 +2,17 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\TagRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\TagRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ORM\Entity(repositoryClass=TagRepository::class)
  * @ApiResource(
+ *      normalizationContext={"groups"={"Tag:read_T","Tag:read_all"}},
  *      collectionOperations={
  *                  "get"={"path"="/admin/tags"},
  *                  "post"={
@@ -45,21 +47,28 @@ class Tag
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"Tag:read_T"})
+     * @Groups({"Brief:read_B"})
      */
     private $libelle;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"Tag:read_T"})
+     * @Groups({"Brief:read_B"})
      */
     private $descriptif;
 
     /**
      * @ORM\ManyToMany(targetEntity=GroupeTag::class, mappedBy="tag")
+     * @Groups({"Tag:read_T"})
+     * @Groups({"Brief:read_B"})
      */
     private $groupeTags;
 
     /**
      * @ORM\ManyToMany(targetEntity=GroupeCompetences::class, mappedBy="tag")
+     * @Groups({"Tag:read_T"})
      */
     private $groupeCompetences;
 

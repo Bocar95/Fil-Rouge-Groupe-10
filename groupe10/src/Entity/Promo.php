@@ -190,14 +190,15 @@ class Promo
     private $admin;
 
     /**
-     * @ORM\OneToMany(targetEntity=PromoBrief::class, mappedBy="promo")
-     */
-    private $promoBrief;
-
-    /**
      * @ORM\OneToMany(targetEntity=StatistiquesCompetences::class, mappedBy="promo")
      */
     private $statistiquesCompetences;
+
+    /**
+     * @ORM\OneToMany(targetEntity=PromoBrief::class, mappedBy="promo")
+     * @Groups({"Promo:read_P"})
+     */
+    private $promoBriefs;
 
     public function __construct()
     {
@@ -205,6 +206,7 @@ class Promo
         $this->formateurs = new ArrayCollection();
         $this->promoBrief = new ArrayCollection();
         $this->statistiquesCompetences = new ArrayCollection();
+        $this->promoBriefs = new ArrayCollection();
     }
 
     public function getId(): ?int
@@ -402,37 +404,6 @@ class Promo
     }
 
     /**
-     * @return Collection|PromoBrief[]
-     */
-    public function getPromoBrief(): Collection
-    {
-        return $this->promoBrief;
-    }
-
-    public function addPromoBrief(PromoBrief $promoBrief): self
-    {
-        if (!$this->promoBrief->contains($promoBrief)) {
-            $this->promoBrief[] = $promoBrief;
-            $promoBrief->setPromo($this);
-        }
-
-        return $this;
-    }
-
-    public function removePromoBrief(PromoBrief $promoBrief): self
-    {
-        if ($this->promoBrief->contains($promoBrief)) {
-            $this->promoBrief->removeElement($promoBrief);
-            // set the owning side to null (unless already changed)
-            if ($promoBrief->getPromo() === $this) {
-                $promoBrief->setPromo(null);
-            }
-        }
-
-        return $this;
-    }
-
-    /**
      * @return Collection|StatistiquesCompetences[]
      */
     public function getStatistiquesCompetences(): Collection
@@ -457,6 +428,37 @@ class Promo
             // set the owning side to null (unless already changed)
             if ($statistiquesCompetence->getPromo() === $this) {
                 $statistiquesCompetence->setPromo(null);
+            }
+        }
+
+        return $this;
+    }
+
+    /**
+     * @return Collection|PromoBrief[]
+     */
+    public function getPromoBriefs(): Collection
+    {
+        return $this->promoBriefs;
+    }
+
+    public function addPromoBrief(PromoBrief $promoBrief): self
+    {
+        if (!$this->promoBriefs->contains($promoBrief)) {
+            $this->promoBriefs[] = $promoBrief;
+            $promoBrief->setPromo($this);
+        }
+
+        return $this;
+    }
+
+    public function removePromoBrief(PromoBrief $promoBrief): self
+    {
+        if ($this->promoBriefs->contains($promoBrief)) {
+            $this->promoBriefs->removeElement($promoBrief);
+            // set the owning side to null (unless already changed)
+            if ($promoBrief->getPromo() === $this) {
+                $promoBrief->setPromo(null);
             }
         }
 

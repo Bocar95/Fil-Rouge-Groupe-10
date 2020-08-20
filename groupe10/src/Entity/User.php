@@ -86,6 +86,7 @@ class User implements UserInterface
      * @Groups({"Formateur:read_F"})
      * @Groups({"Promo:read_P"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"Brief:read_B"})
      */
     private $email;
 
@@ -106,6 +107,7 @@ class User implements UserInterface
      * @Groups({"Formateur:read_F"})
      * @Groups({"Promo:read_P"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"Brief:read_B"})
      */
     private $prenom;
 
@@ -119,6 +121,7 @@ class User implements UserInterface
      * @Groups({"Formateur:read_F"})
      * @Groups({"Promo:read_P"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"Brief:read_B"})
      */
     private $nom;
 
@@ -132,6 +135,7 @@ class User implements UserInterface
      * @Groups({"Promo:read_P"})
      * @Groups({"GroupeApprenant:read_GA"})
      * @Groups({"Apprenant:read_A"})
+     * @Groups({"Brief:read_B"})
      */
     private $adresse;
 

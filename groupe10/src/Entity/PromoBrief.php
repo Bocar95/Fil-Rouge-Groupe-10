@@ -2,15 +2,26 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\PromoBriefRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\PromoBriefRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
  * @ORM\Entity(repositoryClass=PromoBriefRepository::class)
+ * @ApiResource(
+ *      normalizationContext={"groups"={"PromoBrief:read_PB","PromoBrief:read_all"}},
+ *       itemOperations={
+ *          "get"={
+ *                  "security_post_denormalize"="is_granted('VIEW', object)",
+ *                  "security_post_denormalize_message"="Vous n'avez pas ce privilége.",
+ *                  "path"="/admin/promoBrief/{id}",
+ *                  "defaults"={"id"=null}
+ *                }
+ *      }
+ * )
  */
 class PromoBrief
 {
@@ -23,28 +34,36 @@ class PromoBrief
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"Promo:read_PB"})
+     * @Groups({"Promo:read_P"})
      */
     private $statut;
 
     /**
      * @ORM\ManyToOne(targetEntity=Brief::class, inversedBy="promoBrief")
+     * @Groups({"Promo:read_PB"})
+     * @Groups({"Promo:read_P"})
      */
     private $brief;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Promo::class, inversedBy="promoBrief")
-     */
-    private $promo;
-
-    /**
      * @ORM\OneToMany(targetEntity=LivrablesPartiels::class, mappedBy="promoBrief")
+     * @Groups({"Promo:read_PB"})
+     * @Groups({"Promo:read_P"})
      */
     private $livrablesPartiels;
 
     /**
      * @ORM\ManyToOne(targetEntity=PromoBriefApprenant::class, inversedBy="promoBriefs")
+     * @Groups({"Promo:read_PB"})
+     * @Groups({"Promo:read_P"})
      */
     private $promoBriefApprenant;
+
+    /**
+     * @ORM\ManyToOne(targetEntity=Promo::class, inversedBy="promoBriefs")
+     */
+    private $promo;
 
     public function __construct()
     {
@@ -79,19 +98,7 @@ class PromoBrief
 
         return $this;
     }
-
-    public function getPromo(): ?Promo
-    {
-        return $this->promo;
-    }
-
-    public function setPromo(?Promo $promo): self
-    {
-        $this->promo = $promo;
-
-        return $this;
-    }
-
+    
     /**
      * @return Collection|LivrablesPartiels[]
      */
@@ -131,6 +138,18 @@ class PromoBrief
     public function setPromoBriefApprenant(?PromoBriefApprenant $promoBriefApprenant): self
     {
         $this->promoBriefApprenant = $promoBriefApprenant;
+
+        return $this;
+    }
+
+    public function getPromo(): ?Promo
+    {
+        return $this->promo;
+    }
+
+    public function setPromo(?Promo $promo): self
+    {
+        $this->promo = $promo;
 
         return $this;
     }

@@ -2,9 +2,10 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\RessourceRepository;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\RessourceRepository;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource()
@@ -21,11 +22,13 @@ class Ressource
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"Brief:read_B"})
      */
     private $titre;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"Brief:read_B"})
      */
     private $url;
 

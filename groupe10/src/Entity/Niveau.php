@@ -27,6 +27,7 @@ class Niveau
      * @ORM\Column(type="string", length=255)
      * @Groups({"Competences:read_N"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"Brief:read_B"})
      */
     private $libelle;
 
@@ -34,6 +35,7 @@ class Niveau
      * @ORM\Column(type="string", length=255)
      * @Groups({"Competences:read_N"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"Brief:read_B"})
      */
     private $critereEvaluation;
 
@@ -41,11 +43,13 @@ class Niveau
      * @ORM\Column(type="string", length=255)
      * @Groups({"Competences:read_N"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"Brief:read_B"})
      */
     private $groupeAction;
 
     /**
      * @ORM\ManyToOne(targetEntity=Competences::class, inversedBy="niveau")
+     * @Groups({"Brief:read_B"})
      */
     private $competences;
 

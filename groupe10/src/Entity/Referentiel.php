@@ -65,6 +65,7 @@ class Referentiel
      * @Groups({"Referentiel:read_R"})
      * @Groups({"Promo:read_P"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"Brief:read_B"})
      */
     private $libelle;
 
@@ -73,6 +74,7 @@ class Referentiel
      * @Groups({"Referentiel:read_R"})
      * @Groups({"Promo:read_P"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"Brief:read_B"})
      */
     private $presentation;
 
@@ -81,6 +83,7 @@ class Referentiel
      * @Groups({"Referentiel:read_R"})
      * @Groups({"Promo:read_P"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"Brief:read_B"})
      */
     private $programme;
 
@@ -89,6 +92,7 @@ class Referentiel
      * @Groups({"Referentiel:read_R"})
      * @Groups({"Promo:read_P"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"Brief:read_B"})
      */
     private $critereEvaluation;
 
@@ -97,6 +101,7 @@ class Referentiel
      * @Groups({"Referentiel:read_R"})
      * @Groups({"Promo:read_P"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"Brief:read_B"})
      */
     private $critereAdmission;
 

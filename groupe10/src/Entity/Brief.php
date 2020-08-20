@@ -2,15 +2,16 @@
 
 namespace App\Entity;
 
-use ApiPlatform\Core\Annotation\ApiResource;
-use App\Repository\BriefRepository;
-use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use App\Repository\BriefRepository;
+use Doctrine\Common\Collections\Collection;
+use ApiPlatform\Core\Annotation\ApiResource;
+use Doctrine\Common\Collections\ArrayCollection;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
- * @ApiResource()
  * @ORM\Entity(repositoryClass=BriefRepository::class)
+ * @ApiResource()
  */
 class Brief
 {
@@ -23,36 +24,50 @@ class Brief
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"Brief:read_B"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $langue;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"Brief:read_B"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $titre;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"Brief:read_B"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $Description;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"Brief:read_B"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $contexte;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"Brief:read_B"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $modalitePedagogiques;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"Brief:read_B"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $critereDePerformance;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"Brief:read_B"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $modaliteEvaluation;
 
@@ -63,41 +78,57 @@ class Brief
 
     /**
      * @ORM\Column(type="date", nullable=true)
+     * @Groups({"Brief:read_B"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $dateCreation;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"Brief:read_B"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $statutBrief;
 
     /**
      * @ORM\ManyToOne(targetEntity=Referentiel::class, inversedBy="briefs")
+     * @Groups({"Brief:read_B"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $referentiel;
 
     /**
      * @ORM\OneToMany(targetEntity=Niveau::class, mappedBy="brief")
+     * @Groups({"Brief:read_B"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $niveaux;
 
     /**
      * @ORM\ManyToMany(targetEntity=LivrablesAttendus::class, inversedBy="briefs")
+     * @Groups({"Brief:read_B"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $livrablesAttendus;
 
     /**
      * @ORM\ManyToMany(targetEntity=Tag::class, inversedBy="briefs")
+     * @Groups({"Brief:read_B"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $tag;
 
     /**
      * @ORM\OneToMany(targetEntity=Ressource::class, mappedBy="brief")
+     * @Groups({"Brief:read_B"})
+     * @Groups({"GroupeApprenant:read_GA"})
      */
     private $ressource;
 
     /**
      * @ORM\ManyToOne(targetEntity=Formateur::class, inversedBy="briefs")
+     * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"Brief:read_B"})
      */
     private $formateur;
 

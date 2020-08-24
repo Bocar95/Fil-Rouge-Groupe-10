@@ -34,28 +34,28 @@ class PromoBrief
 
     /**
      * @ORM\Column(type="string", length=255)
-     * @Groups({"Promo:read_PB"})
+     * @Groups({"PromoBrief:read_PB"})
      * @Groups({"Promo:read_P"})
      */
     private $statut;
 
     /**
      * @ORM\ManyToOne(targetEntity=Brief::class, inversedBy="promoBrief")
-     * @Groups({"Promo:read_PB"})
+     * @Groups({"PromoBrief:read_PB"})
      * @Groups({"Promo:read_P"})
      */
     private $brief;
 
     /**
      * @ORM\OneToMany(targetEntity=LivrablesPartiels::class, mappedBy="promoBrief")
-     * @Groups({"Promo:read_PB"})
+     * @Groups({"PromoBrief:read_PB"})
      * @Groups({"Promo:read_P"})
      */
     private $livrablesPartiels;
 
     /**
      * @ORM\ManyToOne(targetEntity=PromoBriefApprenant::class, inversedBy="promoBriefs")
-     * @Groups({"Promo:read_PB"})
+     * @Groups({"PromoBrief:read_PB"})
      * @Groups({"Promo:read_P"})
      */
     private $promoBriefApprenant;

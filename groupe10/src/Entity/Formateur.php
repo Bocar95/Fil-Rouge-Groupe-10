@@ -39,16 +39,19 @@ class Formateur extends User
 
     /**
      * @ORM\ManyToMany(targetEntity=GroupeApprenant::class, mappedBy="formateurs")
+     * @Groups({"Formateur:read_F"})
      */
     private $groupeApprenants;
 
     /**
      * @ORM\OneToMany(targetEntity=Brief::class, mappedBy="formateur")
+     * @Groups({"Formateur:read_F"})
      */
     private $briefs;
 
     /**
      * @ORM\OneToMany(targetEntity=Commentaires::class, mappedBy="formateur")
+     * @Groups({"Formateur:read_F"})
      */
     private $commentaires;
 

@@ -2,11 +2,12 @@
 
 namespace App\Entity;
 
+use Doctrine\ORM\Mapping as ORM;
+use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\LivrablesPartielsRepository;
 use Doctrine\Common\Collections\ArrayCollection;
-use Doctrine\Common\Collections\Collection;
-use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Serializer\Annotation\Groups;
 
 /**
  * @ApiResource()
@@ -23,26 +24,31 @@ class LivrablesPartiels
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"PromoBrief:read_PB"})
      */
     private $libelle;
 
     /**
      * @ORM\Column(type="string", length=255, nullable=true)
+     * @Groups({"PromoBrief:read_PB"})
      */
     private $description;
 
     /**
      * @ORM\Column(type="date")
+     * @Groups({"PromoBrief:read_PB"})
      */
     private $delai;
 
     /**
      * @ORM\Column(type="date")
+     * @Groups({"PromoBrief:read_PB"})
      */
     private $dateCreation;
 
     /**
      * @ORM\Column(type="string", length=255)
+     * @Groups({"PromoBrief:read_PB"})
      */
     private $type;
 
@@ -53,11 +59,13 @@ class LivrablesPartiels
 
     /**
      * @ORM\OneToMany(targetEntity=LivrableRendu::class, mappedBy="livrablesPartiels")
+     * @Groups({"PromoBrief:read_PB"})
      */
     private $livrableRendu;
 
     /**
      * @ORM\ManyToMany(targetEntity=Niveau::class, mappedBy="livrablesPartiels")
+     * @Groups({"PromoBrief:read_PB"})
      */
     private $niveaux;
 

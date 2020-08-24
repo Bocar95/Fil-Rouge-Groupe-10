@@ -8,10 +8,50 @@ use Doctrine\Common\Collections\Collection;
 use ApiPlatform\Core\Annotation\ApiResource;
 use Doctrine\Common\Collections\ArrayCollection;
 use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 
 /**
  * @ORM\Entity(repositoryClass=BriefRepository::class)
- * @ApiResource()
+ * @UniqueEntity("titre",message="Ce titre est déja utilisé.")
+ * @ApiResource(
+ *      normalizationContext={"groups"={"Brief:read_B","Brief:read_all"}},
+ *      collectionOperations={
+ *          "get"={"path"="/formateurs/briefs"},
+ *          "getPromoIdGroupeIdBriefs"={"methods"="get",
+ *                  "path"="/formateurs/promo/{id}/groupe/{id}/briefs",
+ *                  "defaults"={"id"=null},
+ *                  "route_name"="apigetPromoIdGroupeIdBriefs"
+ *          },
+ *          "getPromosIdBriefs"={"methods"="get",
+ *                  "path"="/formateurs/promos/{id}/briefs",
+ *                  "defaults"={"id"=null},
+ *                  "route_name"="apigetPromosIdBriefs"
+ *          },
+ *          "getFormateursIdBriefsBroullons"={"methods"="get",
+ *                  "path"="/formateurs/{id}/briefs/broullons",
+ *                  "defaults"={"id"=null},
+ *                  "route_name"="apigetFormateursIdBriefsBroullons"
+ *          },
+ *          "getFormateursIdBriefsValide"={"methods"="get",
+ *                  "path"="/formateurs/{id}/briefs/valide",
+ *                  "defaults"={"id"=null},
+ *                  "route_name"="apigetFormateursIdBriefsValide"
+ *          },
+ *          "getPromosIdBriefsId"={"methods"="get",
+ *                  "path"="/formateurs/promos/{id1}/briefs/{id2}",
+ *                  "defaults"={"id"=null},
+ *                  "route_name"="apigetPromosIdBriefsId"
+ *          }
+ *      },
+ *      itemOperations={
+ *          "get"={
+ *                  "security_post_denormalize"="is_granted('VIEW', object)",
+ *                  "security_post_denormalize_message"="Vous n'avez pas ce privilége.",
+ *                  "path"="/formateurs/briefs/{id}",
+ *                  "defaults"={"id"=null}
+ *                }
+ *      }
+ * )
  */
 class Brief
 {
@@ -26,6 +66,8 @@ class Brief
      * @ORM\Column(type="string", length=255)
      * @Groups({"Brief:read_B"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"PromoBrief:read_PB"})
+     * @Groups({"Formateur:read_F"})
      */
     private $langue;
 
@@ -33,6 +75,8 @@ class Brief
      * @ORM\Column(type="string", length=255)
      * @Groups({"Brief:read_B"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"PromoBrief:read_PB"})
+     * @Groups({"Formateur:read_F"})
      */
     private $titre;
 
@@ -40,6 +84,8 @@ class Brief
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"Brief:read_B"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"PromoBrief:read_PB"})
+     * @Groups({"Formateur:read_F"})
      */
     private $Description;
 
@@ -47,6 +93,8 @@ class Brief
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"Brief:read_B"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"PromoBrief:read_PB"})
+     * @Groups({"Formateur:read_F"})
      */
     private $contexte;
 
@@ -54,6 +102,8 @@ class Brief
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"Brief:read_B"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"PromoBrief:read_PB"})
+     * @Groups({"Formateur:read_F"})
      */
     private $modalitePedagogiques;
 
@@ -61,6 +111,8 @@ class Brief
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"Brief:read_B"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"PromoBrief:read_PB"})
+     * @Groups({"Formateur:read_F"})
      */
     private $critereDePerformance;
 
@@ -68,6 +120,8 @@ class Brief
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"Brief:read_B"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"PromoBrief:read_PB"})
+     * @Groups({"Formateur:read_F"})
      */
     private $modaliteEvaluation;
 
@@ -80,6 +134,8 @@ class Brief
      * @ORM\Column(type="date", nullable=true)
      * @Groups({"Brief:read_B"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"PromoBrief:read_PB"})
+     * @Groups({"Formateur:read_F"})
      */
     private $dateCreation;
 
@@ -87,6 +143,9 @@ class Brief
      * @ORM\Column(type="string", length=255, nullable=true)
      * @Groups({"Brief:read_B"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"PromoBrief:read_PB"})
+     * @Groups({"Formateur:read_F"})
+     * @Groups({"Formateur:read_F"})
      */
     private $statutBrief;
 
@@ -94,6 +153,8 @@ class Brief
      * @ORM\ManyToOne(targetEntity=Referentiel::class, inversedBy="briefs")
      * @Groups({"Brief:read_B"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"PromoBrief:read_PB"})
+     * @Groups({"Formateur:read_F"})
      */
     private $referentiel;
 
@@ -101,6 +162,8 @@ class Brief
      * @ORM\OneToMany(targetEntity=Niveau::class, mappedBy="brief")
      * @Groups({"Brief:read_B"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"PromoBrief:read_PB"})
+     * @Groups({"Formateur:read_F"})
      */
     private $niveaux;
 
@@ -108,6 +171,7 @@ class Brief
      * @ORM\ManyToMany(targetEntity=LivrablesAttendus::class, inversedBy="briefs")
      * @Groups({"Brief:read_B"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"Formateur:read_F"})
      */
     private $livrablesAttendus;
 
@@ -115,6 +179,8 @@ class Brief
      * @ORM\ManyToMany(targetEntity=Tag::class, inversedBy="briefs")
      * @Groups({"Brief:read_B"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"PromoBrief:read_PB"})
+     * @Groups({"Formateur:read_F"})
      */
     private $tag;
 
@@ -122,6 +188,8 @@ class Brief
      * @ORM\OneToMany(targetEntity=Ressource::class, mappedBy="brief")
      * @Groups({"Brief:read_B"})
      * @Groups({"GroupeApprenant:read_GA"})
+     * @Groups({"PromoBrief:read_PB"})
+     * @Groups({"Formateur:read_F"})
      */
     private $ressource;
 
@@ -129,11 +197,13 @@ class Brief
      * @ORM\ManyToOne(targetEntity=Formateur::class, inversedBy="briefs")
      * @Groups({"GroupeApprenant:read_GA"})
      * @Groups({"Brief:read_B"})
+     * @Groups({"PromoBrief:read_PB"})
      */
     private $formateur;
 
     /**
      * @ORM\ManyToMany(targetEntity=GroupeApprenant::class, inversedBy="briefs")
+     * @Groups({"PromoBrief:read_PB"})
      */
     private $groupeApprenant;
 

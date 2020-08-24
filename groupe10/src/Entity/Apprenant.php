@@ -81,6 +81,11 @@ class Apprenant extends User
      */
     private $promoBriefApprenant;
 
+    /**
+     * @ORM\ManyToOne(targetEntity=ProfilSortie::class, inversedBy="apprenants")
+     */
+    private $profilSortie;
+
     public function __construct()
     {
         $this->groupeApprenants = new ArrayCollection();
@@ -133,10 +138,10 @@ class Apprenant extends User
     /**
      * @return Collection|GroupeApprenant[]
      */
-    //public function getGroupeApprenants(): Collection
-    //{
-    //    return $this->groupeApprenants;
-    //}
+    public function getGroupeApprenants(): Collection
+    {
+        return $this->groupeApprenants;
+    }
 
     public function addGroupeApprenant(GroupeApprenant $groupeApprenant): self
     {
@@ -259,6 +264,18 @@ class Apprenant extends User
     public function setPromoBriefApprenant(?PromoBriefApprenant $promoBriefApprenant): self
     {
         $this->promoBriefApprenant = $promoBriefApprenant;
+
+        return $this;
+    }
+
+    public function getProfilSortie(): ?ProfilSortie
+    {
+        return $this->profilSortie;
+    }
+
+    public function setProfilSortie(?ProfilSortie $profilSortie): self
+    {
+        $this->profilSortie = $profilSortie;
 
         return $this;
     }
